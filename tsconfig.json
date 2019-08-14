@@ -1,5 +1,6 @@
 {
     "compilerOptions": {
-        "lib": ["es2016", "esnext.asynciterable"]
-    }
+        "lib": ["es2016", "esnext.asynciterable"],
+        "resolveJsonModule": true
+    },
 }
