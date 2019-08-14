@@ -1,7 +1,6 @@
 import { GraphQLServer } from 'graphql-yoga';
 import { prisma } from './prisma';
 import { ContextParameters } from 'graphql-yoga/dist/types';
-import './utils/generateToken';
 
 const resolvers = {};
 

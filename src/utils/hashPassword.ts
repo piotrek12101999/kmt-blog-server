@@ -8,3 +8,5 @@ function hashPassword(password: string): Promise<string> {
 
   return bcrypt.hash(password, data.passwordSalt);
 }
+
+export { hashPassword };
