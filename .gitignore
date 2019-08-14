@@ -1,0 +1,4 @@
+node_modules
+.env
+prisma/docker-compose.yml
+package-lock.json

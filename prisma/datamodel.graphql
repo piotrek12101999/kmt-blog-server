@@ -1,0 +1,39 @@
+type User {
+  id: ID! @id
+  type: UserType! @default(value: USER)
+  email: String! @unique
+  password: String!
+  name: String!
+  description: String
+  profile_picture: String
+  updatedAt: DateTime! @updatedAt
+  createdAt: DateTime! @createdAt
+  posts: [Post!]! @relation(name: "PostToUser", onDelete: CASCADE)
+  comments: [Comment!]! @relation(name: "CommentToUser", onDelete: CASCADE)
+}
+
+enum UserType {
+  ADMIN
+  USER
+}
+
+type Post {
+  id: ID! @id
+  title: String!
+  subtitle: String
+  body: String!
+  published: Boolean @default(value: false)
+  updatedAt: DateTime! @updatedAt
+  createdAt: DateTime! @createdAt
+  author: User! @relation(name: "PostToUser", onDelete: SET_NULL)
+  comments: [Comment!]! @relation(name: "CommentToPost", onDelete: CASCADE)
+}
+
+type Comment {
+  id: ID! @id
+  text: String!
+  updatedAt: DateTime! @updatedAt
+  createdAt: DateTime! @createdAt
+  author: User! @relation(name: "CommentToUser", onDelete: SET_NULL)
+  post: Post! @relation(name: "CommentToPost", onDelete: SET_NULL)
+}
