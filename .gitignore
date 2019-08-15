@@ -2,4 +2,6 @@ node_modules
 .env
 prisma/docker-compose.yml
 prisma/prisma.yml
+prisma/generated
+prisma/generated/prisma-client/index.ts
 package-lock.json
