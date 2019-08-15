@@ -1,5 +1,6 @@
 endpoint: http://localhost:4466
 datamodel: datamodel.graphql
+secret: \q_N/2vJ@@g8g{-m
 
 generate:
   - generator: typescript-client
