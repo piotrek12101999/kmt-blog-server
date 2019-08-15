@@ -1,5 +1,6 @@
 type Query {
   users(query: String, first: Int, skip: Int, after: String): [User!]!
+  user(id: ID!): User
   posts(query: String, first: Int, skip: Int, after: String): [Post!]!
   myPosts(query: String, first: Int, skip: Int, after: String): [Post!]!
   comments(first: Int, skip: Int, after: String): [Comment!]!
@@ -20,10 +21,23 @@ type Mutation {
   logIn(data: UserLoginInput!): AuthPayload!
 }
 
-type Subscription {
-  comment(postId: ID!): CommentSubscriptionPayload!
-  post: PostSubscriptionPayload!
-  myPost: PostSubscriptionPayload!
+type User {
+  id: ID!
+  type: UserType!
+  email: String!
+  password: String!
+  name: String!
+  description: String
+  profile_picture: String
+  updatedAt: String!
+  createdAt: String!
+  posts: [Post!]!
+  comments: [Comment!]!
+}
+
+enum UserType {
+  ADMIN
+  USER
 }
 
 type AuthPayload {
@@ -66,17 +80,6 @@ input UpdateCommentInput {
 input UserLoginInput {
   email: String!
   password: String!
-}
-
-type User {
-  id: ID!
-  name: String!
-  email: String
-  password: String!
-  posts: [Post!]
-  comments: [Comment!]!
-  updatedAt: String!
-  createdAt: String!
 }
 
 type Post {
