@@ -1,7 +1,7 @@
 import { GraphQLServer } from 'graphql-yoga';
 import { prisma } from './prisma';
 import { ContextParameters } from 'graphql-yoga/dist/types';
-import { resolvers } from './resolvers/index';
+import { resolvers, fragmentReplacements } from './resolvers/index';
 import * as dotenv from 'dotenv';
 
 dotenv.config({ path: `${__dirname}/.env` });
@@ -14,7 +14,9 @@ const server: GraphQLServer = new GraphQLServer({
       prisma,
       request
     };
-  }
+  },
+  // @ts-ignore
+  fragmentReplacements
 });
 
 server.start(() => console.log('Server is up and running!'));

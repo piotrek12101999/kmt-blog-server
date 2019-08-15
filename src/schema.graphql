@@ -24,7 +24,7 @@ type Mutation {
 type User {
   id: ID!
   type: UserType!
-  email: String!
+  email: String
   password: String!
   name: String!
   description: String
