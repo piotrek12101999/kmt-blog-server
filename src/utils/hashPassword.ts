@@ -5,7 +5,7 @@ function hashPassword(password: string): Promise<string> {
     throw new Error('Password must be 8 characaters or longer.');
   }
 
-  return bcrypt.hash(password, process.env.PASSWORD_SALT);
+  return bcrypt.hash(password, parseInt(process.env.PASSWORD_SALT));
 }
 
 export { hashPassword };
