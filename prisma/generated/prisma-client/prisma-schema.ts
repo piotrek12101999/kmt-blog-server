@@ -354,6 +354,8 @@ type PostCategory {
   name: String!
   description: String!
   category_picture: String!
+  updatedAt: DateTime!
+  createdAt: DateTime!
   posts(where: PostWhereInput, orderBy: PostOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Post!]
 }
 
@@ -397,6 +399,10 @@ enum PostCategoryOrderByInput {
   description_DESC
   category_picture_ASC
   category_picture_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+  createdAt_ASC
+  createdAt_DESC
 }
 
 type PostCategoryPreviousValues {
@@ -404,6 +410,8 @@ type PostCategoryPreviousValues {
   name: String!
   description: String!
   category_picture: String!
+  updatedAt: DateTime!
+  createdAt: DateTime!
 }
 
 type PostCategorySubscriptionPayload {
@@ -512,6 +520,22 @@ input PostCategoryWhereInput {
   category_picture_not_starts_with: String
   category_picture_ends_with: String
   category_picture_not_ends_with: String
+  updatedAt: DateTime
+  updatedAt_not: DateTime
+  updatedAt_in: [DateTime!]
+  updatedAt_not_in: [DateTime!]
+  updatedAt_lt: DateTime
+  updatedAt_lte: DateTime
+  updatedAt_gt: DateTime
+  updatedAt_gte: DateTime
+  createdAt: DateTime
+  createdAt_not: DateTime
+  createdAt_in: [DateTime!]
+  createdAt_not_in: [DateTime!]
+  createdAt_lt: DateTime
+  createdAt_lte: DateTime
+  createdAt_gt: DateTime
+  createdAt_gte: DateTime
   posts_every: PostWhereInput
   posts_some: PostWhereInput
   posts_none: PostWhereInput

@@ -1,11 +1,15 @@
 # source: http://localhost:4466
-# timestamp: Thu Aug 15 2019 00:00:13 GMT+0200 (CEST)
+# timestamp: Fri Aug 16 2019 19:28:29 GMT+0200 (CEST)
 
 type AggregateComment {
   count: Int!
 }
 
 type AggregatePost {
+  count: Int!
+}
+
+type AggregatePostCategory {
   count: Int!
 }
 
@@ -245,9 +249,7 @@ input CommentSubscriptionWhereInput {
   """Logical NOT on all given filters combined by AND."""
   NOT: [CommentSubscriptionWhereInput!]
 
-  """
-  The subscription event gets dispatched when it's listed in mutation_in
-  """
+  """The subscription event gets dispatched when it's listed in mutation_in"""
   mutation_in: [MutationType!]
 
   """
@@ -497,21 +499,27 @@ scalar Long
 type Mutation {
   createUser(data: UserCreateInput!): User!
   createPost(data: PostCreateInput!): Post!
+  createPostCategory(data: PostCategoryCreateInput!): PostCategory!
   createComment(data: CommentCreateInput!): Comment!
   updateUser(data: UserUpdateInput!, where: UserWhereUniqueInput!): User
   updatePost(data: PostUpdateInput!, where: PostWhereUniqueInput!): Post
+  updatePostCategory(data: PostCategoryUpdateInput!, where: PostCategoryWhereUniqueInput!): PostCategory
   updateComment(data: CommentUpdateInput!, where: CommentWhereUniqueInput!): Comment
   deleteUser(where: UserWhereUniqueInput!): User
   deletePost(where: PostWhereUniqueInput!): Post
+  deletePostCategory(where: PostCategoryWhereUniqueInput!): PostCategory
   deleteComment(where: CommentWhereUniqueInput!): Comment
   upsertUser(where: UserWhereUniqueInput!, create: UserCreateInput!, update: UserUpdateInput!): User!
   upsertPost(where: PostWhereUniqueInput!, create: PostCreateInput!, update: PostUpdateInput!): Post!
+  upsertPostCategory(where: PostCategoryWhereUniqueInput!, create: PostCategoryCreateInput!, update: PostCategoryUpdateInput!): PostCategory!
   upsertComment(where: CommentWhereUniqueInput!, create: CommentCreateInput!, update: CommentUpdateInput!): Comment!
   updateManyUsers(data: UserUpdateManyMutationInput!, where: UserWhereInput): BatchPayload!
   updateManyPosts(data: PostUpdateManyMutationInput!, where: PostWhereInput): BatchPayload!
+  updateManyPostCategories(data: PostCategoryUpdateManyMutationInput!, where: PostCategoryWhereInput): BatchPayload!
   updateManyComments(data: CommentUpdateManyMutationInput!, where: CommentWhereInput): BatchPayload!
   deleteManyUsers(where: UserWhereInput): BatchPayload!
   deleteManyPosts(where: PostWhereInput): BatchPayload!
+  deleteManyPostCategories(where: PostCategoryWhereInput): BatchPayload!
   deleteManyComments(where: CommentWhereInput): BatchPayload!
   executeRaw(database: PrismaDatabase, query: String!): Json!
 }
@@ -551,8 +559,372 @@ type Post implements Node {
   published: Boolean
   updatedAt: DateTime!
   createdAt: DateTime!
+  category: PostCategory!
   author: User!
   comments(where: CommentWhereInput, orderBy: CommentOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Comment!]
+}
+
+type PostCategory implements Node {
+  id: ID!
+  name: String!
+  description: String!
+  category_picture: String!
+  updatedAt: DateTime!
+  createdAt: DateTime!
+  posts(where: PostWhereInput, orderBy: PostOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Post!]
+}
+
+"""A connection to a list of items."""
+type PostCategoryConnection {
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """A list of edges."""
+  edges: [PostCategoryEdge]!
+  aggregate: AggregatePostCategory!
+}
+
+input PostCategoryCreateInput {
+  id: ID
+  name: String!
+  description: String!
+  category_picture: String!
+  posts: PostCreateManyWithoutCategoryInput
+}
+
+input PostCategoryCreateOneWithoutPostsInput {
+  create: PostCategoryCreateWithoutPostsInput
+  connect: PostCategoryWhereUniqueInput
+}
+
+input PostCategoryCreateWithoutPostsInput {
+  id: ID
+  name: String!
+  description: String!
+  category_picture: String!
+}
+
+"""An edge in a connection."""
+type PostCategoryEdge {
+  """The item at the end of the edge."""
+  node: PostCategory!
+
+  """A cursor for use in pagination."""
+  cursor: String!
+}
+
+enum PostCategoryOrderByInput {
+  id_ASC
+  id_DESC
+  name_ASC
+  name_DESC
+  description_ASC
+  description_DESC
+  category_picture_ASC
+  category_picture_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+  createdAt_ASC
+  createdAt_DESC
+}
+
+type PostCategoryPreviousValues {
+  id: ID!
+  name: String!
+  description: String!
+  category_picture: String!
+  updatedAt: DateTime!
+  createdAt: DateTime!
+}
+
+type PostCategorySubscriptionPayload {
+  mutation: MutationType!
+  node: PostCategory
+  updatedFields: [String!]
+  previousValues: PostCategoryPreviousValues
+}
+
+input PostCategorySubscriptionWhereInput {
+  """Logical AND on all given filters."""
+  AND: [PostCategorySubscriptionWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [PostCategorySubscriptionWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [PostCategorySubscriptionWhereInput!]
+
+  """The subscription event gets dispatched when it's listed in mutation_in"""
+  mutation_in: [MutationType!]
+
+  """
+  The subscription event gets only dispatched when one of the updated fields names is included in this list
+  """
+  updatedFields_contains: String
+
+  """
+  The subscription event gets only dispatched when all of the field names included in this list have been updated
+  """
+  updatedFields_contains_every: [String!]
+
+  """
+  The subscription event gets only dispatched when some of the field names included in this list have been updated
+  """
+  updatedFields_contains_some: [String!]
+  node: PostCategoryWhereInput
+}
+
+input PostCategoryUpdateInput {
+  name: String
+  description: String
+  category_picture: String
+  posts: PostUpdateManyWithoutCategoryInput
+}
+
+input PostCategoryUpdateManyMutationInput {
+  name: String
+  description: String
+  category_picture: String
+}
+
+input PostCategoryUpdateOneRequiredWithoutPostsInput {
+  create: PostCategoryCreateWithoutPostsInput
+  connect: PostCategoryWhereUniqueInput
+  update: PostCategoryUpdateWithoutPostsDataInput
+  upsert: PostCategoryUpsertWithoutPostsInput
+}
+
+input PostCategoryUpdateWithoutPostsDataInput {
+  name: String
+  description: String
+  category_picture: String
+}
+
+input PostCategoryUpsertWithoutPostsInput {
+  update: PostCategoryUpdateWithoutPostsDataInput!
+  create: PostCategoryCreateWithoutPostsInput!
+}
+
+input PostCategoryWhereInput {
+  """Logical AND on all given filters."""
+  AND: [PostCategoryWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [PostCategoryWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [PostCategoryWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
+  name: String
+
+  """All values that are not equal to given value."""
+  name_not: String
+
+  """All values that are contained in given list."""
+  name_in: [String!]
+
+  """All values that are not contained in given list."""
+  name_not_in: [String!]
+
+  """All values less than the given value."""
+  name_lt: String
+
+  """All values less than or equal the given value."""
+  name_lte: String
+
+  """All values greater than the given value."""
+  name_gt: String
+
+  """All values greater than or equal the given value."""
+  name_gte: String
+
+  """All values containing the given string."""
+  name_contains: String
+
+  """All values not containing the given string."""
+  name_not_contains: String
+
+  """All values starting with the given string."""
+  name_starts_with: String
+
+  """All values not starting with the given string."""
+  name_not_starts_with: String
+
+  """All values ending with the given string."""
+  name_ends_with: String
+
+  """All values not ending with the given string."""
+  name_not_ends_with: String
+  description: String
+
+  """All values that are not equal to given value."""
+  description_not: String
+
+  """All values that are contained in given list."""
+  description_in: [String!]
+
+  """All values that are not contained in given list."""
+  description_not_in: [String!]
+
+  """All values less than the given value."""
+  description_lt: String
+
+  """All values less than or equal the given value."""
+  description_lte: String
+
+  """All values greater than the given value."""
+  description_gt: String
+
+  """All values greater than or equal the given value."""
+  description_gte: String
+
+  """All values containing the given string."""
+  description_contains: String
+
+  """All values not containing the given string."""
+  description_not_contains: String
+
+  """All values starting with the given string."""
+  description_starts_with: String
+
+  """All values not starting with the given string."""
+  description_not_starts_with: String
+
+  """All values ending with the given string."""
+  description_ends_with: String
+
+  """All values not ending with the given string."""
+  description_not_ends_with: String
+  category_picture: String
+
+  """All values that are not equal to given value."""
+  category_picture_not: String
+
+  """All values that are contained in given list."""
+  category_picture_in: [String!]
+
+  """All values that are not contained in given list."""
+  category_picture_not_in: [String!]
+
+  """All values less than the given value."""
+  category_picture_lt: String
+
+  """All values less than or equal the given value."""
+  category_picture_lte: String
+
+  """All values greater than the given value."""
+  category_picture_gt: String
+
+  """All values greater than or equal the given value."""
+  category_picture_gte: String
+
+  """All values containing the given string."""
+  category_picture_contains: String
+
+  """All values not containing the given string."""
+  category_picture_not_contains: String
+
+  """All values starting with the given string."""
+  category_picture_starts_with: String
+
+  """All values not starting with the given string."""
+  category_picture_not_starts_with: String
+
+  """All values ending with the given string."""
+  category_picture_ends_with: String
+
+  """All values not ending with the given string."""
+  category_picture_not_ends_with: String
+  updatedAt: DateTime
+
+  """All values that are not equal to given value."""
+  updatedAt_not: DateTime
+
+  """All values that are contained in given list."""
+  updatedAt_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  updatedAt_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  updatedAt_lt: DateTime
+
+  """All values less than or equal the given value."""
+  updatedAt_lte: DateTime
+
+  """All values greater than the given value."""
+  updatedAt_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  updatedAt_gte: DateTime
+  createdAt: DateTime
+
+  """All values that are not equal to given value."""
+  createdAt_not: DateTime
+
+  """All values that are contained in given list."""
+  createdAt_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  createdAt_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  createdAt_lt: DateTime
+
+  """All values less than or equal the given value."""
+  createdAt_lte: DateTime
+
+  """All values greater than the given value."""
+  createdAt_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  createdAt_gte: DateTime
+  posts_every: PostWhereInput
+  posts_some: PostWhereInput
+  posts_none: PostWhereInput
+}
+
+input PostCategoryWhereUniqueInput {
+  id: ID
 }
 
 """A connection to a list of items."""
@@ -571,12 +943,18 @@ input PostCreateInput {
   subtitle: String
   body: String!
   published: Boolean
+  category: PostCategoryCreateOneWithoutPostsInput!
   author: UserCreateOneWithoutPostsInput!
   comments: CommentCreateManyWithoutPostInput
 }
 
 input PostCreateManyWithoutAuthorInput {
   create: [PostCreateWithoutAuthorInput!]
+  connect: [PostWhereUniqueInput!]
+}
+
+input PostCreateManyWithoutCategoryInput {
+  create: [PostCreateWithoutCategoryInput!]
   connect: [PostWhereUniqueInput!]
 }
 
@@ -591,6 +969,17 @@ input PostCreateWithoutAuthorInput {
   subtitle: String
   body: String!
   published: Boolean
+  category: PostCategoryCreateOneWithoutPostsInput!
+  comments: CommentCreateManyWithoutPostInput
+}
+
+input PostCreateWithoutCategoryInput {
+  id: ID
+  title: String!
+  subtitle: String
+  body: String!
+  published: Boolean
+  author: UserCreateOneWithoutPostsInput!
   comments: CommentCreateManyWithoutPostInput
 }
 
@@ -600,6 +989,7 @@ input PostCreateWithoutCommentsInput {
   subtitle: String
   body: String!
   published: Boolean
+  category: PostCategoryCreateOneWithoutPostsInput!
   author: UserCreateOneWithoutPostsInput!
 }
 
@@ -875,9 +1265,7 @@ input PostSubscriptionWhereInput {
   """Logical NOT on all given filters combined by AND."""
   NOT: [PostSubscriptionWhereInput!]
 
-  """
-  The subscription event gets dispatched when it's listed in mutation_in
-  """
+  """The subscription event gets dispatched when it's listed in mutation_in"""
   mutation_in: [MutationType!]
 
   """
@@ -902,6 +1290,7 @@ input PostUpdateInput {
   subtitle: String
   body: String
   published: Boolean
+  category: PostCategoryUpdateOneRequiredWithoutPostsInput
   author: UserUpdateOneRequiredWithoutPostsInput
   comments: CommentUpdateManyWithoutPostInput
 }
@@ -932,6 +1321,18 @@ input PostUpdateManyWithoutAuthorInput {
   upsert: [PostUpsertWithWhereUniqueWithoutAuthorInput!]
 }
 
+input PostUpdateManyWithoutCategoryInput {
+  create: [PostCreateWithoutCategoryInput!]
+  connect: [PostWhereUniqueInput!]
+  set: [PostWhereUniqueInput!]
+  disconnect: [PostWhereUniqueInput!]
+  delete: [PostWhereUniqueInput!]
+  update: [PostUpdateWithWhereUniqueWithoutCategoryInput!]
+  updateMany: [PostUpdateManyWithWhereNestedInput!]
+  deleteMany: [PostScalarWhereInput!]
+  upsert: [PostUpsertWithWhereUniqueWithoutCategoryInput!]
+}
+
 input PostUpdateManyWithWhereNestedInput {
   where: PostScalarWhereInput!
   data: PostUpdateManyDataInput!
@@ -949,6 +1350,16 @@ input PostUpdateWithoutAuthorDataInput {
   subtitle: String
   body: String
   published: Boolean
+  category: PostCategoryUpdateOneRequiredWithoutPostsInput
+  comments: CommentUpdateManyWithoutPostInput
+}
+
+input PostUpdateWithoutCategoryDataInput {
+  title: String
+  subtitle: String
+  body: String
+  published: Boolean
+  author: UserUpdateOneRequiredWithoutPostsInput
   comments: CommentUpdateManyWithoutPostInput
 }
 
@@ -957,12 +1368,18 @@ input PostUpdateWithoutCommentsDataInput {
   subtitle: String
   body: String
   published: Boolean
+  category: PostCategoryUpdateOneRequiredWithoutPostsInput
   author: UserUpdateOneRequiredWithoutPostsInput
 }
 
 input PostUpdateWithWhereUniqueWithoutAuthorInput {
   where: PostWhereUniqueInput!
   data: PostUpdateWithoutAuthorDataInput!
+}
+
+input PostUpdateWithWhereUniqueWithoutCategoryInput {
+  where: PostWhereUniqueInput!
+  data: PostUpdateWithoutCategoryDataInput!
 }
 
 input PostUpsertWithoutCommentsInput {
@@ -974,6 +1391,12 @@ input PostUpsertWithWhereUniqueWithoutAuthorInput {
   where: PostWhereUniqueInput!
   update: PostUpdateWithoutAuthorDataInput!
   create: PostCreateWithoutAuthorInput!
+}
+
+input PostUpsertWithWhereUniqueWithoutCategoryInput {
+  where: PostWhereUniqueInput!
+  update: PostUpdateWithoutCategoryDataInput!
+  create: PostCreateWithoutCategoryInput!
 }
 
 input PostWhereInput {
@@ -1193,6 +1616,7 @@ input PostWhereInput {
 
   """All values greater than or equal the given value."""
   createdAt_gte: DateTime
+  category: PostCategoryWhereInput
   author: UserWhereInput
   comments_every: CommentWhereInput
   comments_some: CommentWhereInput
@@ -1210,12 +1634,15 @@ enum PrismaDatabase {
 type Query {
   users(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [User]!
   posts(where: PostWhereInput, orderBy: PostOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Post]!
+  postCategories(where: PostCategoryWhereInput, orderBy: PostCategoryOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [PostCategory]!
   comments(where: CommentWhereInput, orderBy: CommentOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Comment]!
   user(where: UserWhereUniqueInput!): User
   post(where: PostWhereUniqueInput!): Post
+  postCategory(where: PostCategoryWhereUniqueInput!): PostCategory
   comment(where: CommentWhereUniqueInput!): Comment
   usersConnection(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): UserConnection!
   postsConnection(where: PostWhereInput, orderBy: PostOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): PostConnection!
+  postCategoriesConnection(where: PostCategoryWhereInput, orderBy: PostCategoryOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): PostCategoryConnection!
   commentsConnection(where: CommentWhereInput, orderBy: CommentOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): CommentConnection!
 
   """Fetches an object given its ID"""
@@ -1228,6 +1655,7 @@ type Query {
 type Subscription {
   user(where: UserSubscriptionWhereInput): UserSubscriptionPayload
   post(where: PostSubscriptionWhereInput): PostSubscriptionPayload
+  postCategory(where: PostCategorySubscriptionWhereInput): PostCategorySubscriptionPayload
   comment(where: CommentSubscriptionWhereInput): CommentSubscriptionPayload
 }
 
@@ -1358,9 +1786,7 @@ input UserSubscriptionWhereInput {
   """Logical NOT on all given filters combined by AND."""
   NOT: [UserSubscriptionWhereInput!]
 
-  """
-  The subscription event gets dispatched when it's listed in mutation_in
-  """
+  """The subscription event gets dispatched when it's listed in mutation_in"""
   mutation_in: [MutationType!]
 
   """

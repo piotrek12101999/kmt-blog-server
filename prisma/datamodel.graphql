@@ -35,6 +35,8 @@ type PostCategory {
   name: String!
   description: String!
   category_picture: String!
+  updatedAt: DateTime! @updatedAt
+  createdAt: DateTime! @createdAt
   posts: [Post!]! @relation(name: "CategoryToPost", onDelete: CASCADE)
 }
 

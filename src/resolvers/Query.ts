@@ -8,7 +8,7 @@ import {
   UserNullablePromise,
   Post,
   Comment
-} from '../../generated/prisma-client';
+} from '../../prisma/generated/prisma-client';
 import { getUserId } from '../utils/getUserId';
 
 const Query = {

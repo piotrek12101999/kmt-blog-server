@@ -4,6 +4,8 @@ type Query {
   posts(query: String, first: Int, skip: Int, after: String): [Post!]!
   post(id: ID!): Post!
   comments(first: Int, skip: Int, after: String): [Comment!]!
+  categories(query: String, first: Int, skip: Int, after: String): [PostCategory!]!
+  category(id: ID!): PostCategory!
 }
 
 type Mutation {
@@ -67,6 +69,16 @@ input UpdateCommentInput {
 input UserLoginInput {
   email: String!
   password: String!
+}
+
+type PostCategory {
+  id: ID!
+  name: String!
+  description: String!
+  category_picture: String!
+  updatedAt: String!
+  createdAt: String!
+  posts: [Post!]!
 }
 
 type User {
