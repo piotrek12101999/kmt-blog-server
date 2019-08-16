@@ -25,8 +25,17 @@ type Post {
   published: Boolean @default(value: false)
   updatedAt: DateTime! @updatedAt
   createdAt: DateTime! @createdAt
+  category: PostCategory! @relation(name: "CategoryToPost", onDelete: SET_NULL)
   author: User! @relation(name: "PostToUser", onDelete: SET_NULL)
   comments: [Comment!]! @relation(name: "CommentToPost", onDelete: CASCADE)
+}
+
+type PostCategory {
+  id: ID! @id
+  name: String!
+  description: String!
+  category_picture: String!
+  posts: [Post!]! @relation(name: "CategoryToPost", onDelete: CASCADE)
 }
 
 type Comment {

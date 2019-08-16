@@ -34,6 +34,8 @@ input CreateUserInput {
   name: String!
   email: String!
   password: String!
+  description: String
+  profile_picture: String
 }
 
 input UpdateUserInput {
