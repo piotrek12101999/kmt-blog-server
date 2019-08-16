@@ -1,4 +1,4 @@
-import { Pagination, Query, OperationArguments } from '../models/query.interfaces';
+import { Query, OperationArguments } from '../models/query.interfaces';
 import { Context } from '../models/context.interface';
 import {
   UserWhereInput,
@@ -6,12 +6,13 @@ import {
   FragmentableArray,
   User,
   UserNullablePromise,
-  Post
+  Post,
+  Comment
 } from '../../generated/prisma-client';
 import { getUserId } from '../utils/getUserId';
 
 const Query = {
-  users(_: any, { query, first, skip, after }: Query, { prisma }: Context): FragmentableArray<User> {
+  users(_: any, { query, first, skip, after }: Query, { prisma }: Context, info: any): FragmentableArray<User> {
     const where: UserWhereInput = {
       name_contains: query
     };
@@ -23,7 +24,8 @@ const Query = {
       where
     };
 
-    return prisma.query.users(opArgs);
+    // @ts-ignore
+    return prisma.query.users(opArgs, info);
   },
   user(_: any, { id }, { prisma }): UserNullablePromise {
     return prisma.query.user({ where: { id } });
@@ -70,6 +72,9 @@ const Query = {
     });
 
     return post;
+  },
+  comments(_: any, __: any, { prisma }: Context): FragmentableArray<Comment> {
+    return prisma.query.comments();
   }
 };
 

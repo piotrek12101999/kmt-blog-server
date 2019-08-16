@@ -2,10 +2,8 @@ type Query {
   users(query: String, first: Int, skip: Int, after: String): [User!]!
   user(id: ID!): User
   posts(query: String, first: Int, skip: Int, after: String): [Post!]!
-  myPosts(query: String, first: Int, skip: Int, after: String): [Post!]!
-  comments(first: Int, skip: Int, after: String): [Comment!]!
   post(id: ID!): Post!
-  me: User!
+  comments(first: Int, skip: Int, after: String): [Comment!]!
 }
 
 type Mutation {
@@ -21,24 +19,11 @@ type Mutation {
   logIn(data: UserLoginInput!): AuthPayload!
 }
 
-type User {
-  id: ID!
-  type: UserType!
-  email: String
-  password: String!
-  name: String!
-  description: String
-  profile_picture: String
-  updatedAt: String!
-  createdAt: String!
-  posts: [Post!]!
-  comments: [Comment!]!
-}
-
 enum UserType {
   ADMIN
   USER
 }
+
 
 type AuthPayload {
   token: String!
@@ -80,6 +65,20 @@ input UpdateCommentInput {
 input UserLoginInput {
   email: String!
   password: String!
+}
+
+type User {
+  id: ID!
+  type: UserType!
+  email: String
+  password: String!
+  name: String!
+  description: String
+  profile_picture: String
+  updatedAt: String!
+  createdAt: String!
+  posts: [Post!]!
+  comments: [Comment!]!
 }
 
 type Post {
