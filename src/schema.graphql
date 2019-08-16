@@ -10,15 +10,15 @@ type Query {
 
 type Mutation {
   createUser(data: CreateUserInput!): AuthPayload!
-  deleteUser: User!
-  updateUser(data: UpdateUserInput!): User!
-  createPost(data: CreatePostInput!): Post!
-  deletePost(id: ID!): Post!
-  updatePost(id: ID!, data: UpdatePostInput!): Post!
-  createComment(data: CreateCommentInput!): Comment!
-  deleteComment(id: ID!): Comment!
-  updateComment(id: ID!, data: UpdateCommentInput!): Comment!
   logIn(data: UserLoginInput!): AuthPayload!
+  updateUser(data: UpdateUserInput!): User!
+  deleteUser(id: ID!): User
+  createPost(data: CreatePostInput!): Post!
+  updatePost(id: ID!, data: UpdatePostInput!): Post!
+  deletePost(id: ID!): Post!
+  createComment(data: CreateCommentInput!): Comment!
+  updateComment(id: ID!, data: UpdateCommentInput!): Comment!
+  deleteComment(id: ID!): Comment!
 }
 
 enum UserType {
@@ -26,6 +26,45 @@ enum UserType {
   USER
 }
 
+type User {
+  id: ID!
+  type: UserType!
+  email: String
+  password: String!
+  name: String!
+  description: String
+  profile_picture: String
+  updatedAt: String!
+  createdAt: String!
+  posts: [Post!]!
+  comments: [Comment!]!
+}
+
+type PostCategory {
+  id: ID!
+  name: String!
+  description: String!
+  category_picture: String!
+  updatedAt: String!
+  createdAt: String!
+  posts: [Post!]!
+}
+
+type Post {
+  id: ID!
+  title: String!
+  body: String!
+  published: Boolean!
+  author: User!
+  comments: [Comment!]!
+}
+
+type Comment {
+  id: ID!
+  text: String!
+  author: User!
+  post: Post!
+}
 
 type AuthPayload {
   token: String!
@@ -71,45 +110,6 @@ input UserLoginInput {
   password: String!
 }
 
-type PostCategory {
-  id: ID!
-  name: String!
-  description: String!
-  category_picture: String!
-  updatedAt: String!
-  createdAt: String!
-  posts: [Post!]!
-}
-
-type User {
-  id: ID!
-  type: UserType!
-  email: String
-  password: String!
-  name: String!
-  description: String
-  profile_picture: String
-  updatedAt: String!
-  createdAt: String!
-  posts: [Post!]!
-  comments: [Comment!]!
-}
-
-type Post {
-  id: ID!
-  title: String!
-  body: String!
-  published: Boolean!
-  author: User!
-  comments: [Comment!]!
-}
-
-type Comment {
-  id: ID!
-  text: String!
-  author: User!
-  post: Post!
-}
 
 enum MutationType {
   CREATED

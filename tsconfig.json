@@ -1,6 +1,10 @@
 {
     "compilerOptions": {
         "lib": ["es2016", "esnext.asynciterable"],
-        "resolveJsonModule": true
+        "resolveJsonModule": true,
+        "noImplicitThis": true,
+        "alwaysStrict": true,
+        "strictBindCallApply": true,
+        "strictFunctionTypes": true,
     },
 }
