@@ -13,12 +13,15 @@ type Mutation {
   logIn(data: UserLoginInput!): AuthPayload!
   updateUser(id: ID!, data: UpdateUserInput!): User!
   deleteUser(id: ID!): User!
+  createPostCategory(data: CreatePostCategoryInput!): PostCategory!
+  updatePostCategory(id: ID!, data: UpdatePostCategoryInput!): PostCategory!
+  deletePostCategory(id: ID!): PostCategory!
   createPost(data: CreatePostInput!): Post!
   updatePost(id: ID!, data: UpdatePostInput!): Post!
   deletePost(id: ID!): Post!
   createComment(data: CreateCommentInput!): Comment!
   updateComment(id: ID!, data: UpdateCommentInput!): Comment!
-  deleteComment(id: ID!, authorID: ID!): Comment!
+  deleteComment(id: ID!): Comment!
 }
 
 enum UserType {
@@ -85,6 +88,18 @@ input UpdateUserInput {
   password: String
   description: String
   profile_picture: String
+}
+
+input CreatePostCategoryInput {
+  name: String!
+  description: String!
+  category_picture: String!
+}
+
+input UpdatePostCategoryInput {
+  name: String!
+  description: String!
+  category_picture: String!
 }
 
 input CreatePostInput {
