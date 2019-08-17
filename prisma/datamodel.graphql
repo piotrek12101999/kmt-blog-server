@@ -8,6 +8,7 @@ type User {
   profile_picture: String
   updatedAt: DateTime! @updatedAt
   createdAt: DateTime! @createdAt
+  categories: [PostCategory!]! @relation(name: "CategoryToUser", onDelete: CASCADE)
   posts: [Post!]! @relation(name: "PostToUser", onDelete: CASCADE)
   comments: [Comment!]! @relation(name: "CommentToUser", onDelete: CASCADE)
 }
@@ -37,6 +38,7 @@ type PostCategory {
   category_picture: String!
   updatedAt: DateTime! @updatedAt
   createdAt: DateTime! @createdAt
+  author: User! @relation(name: "CategoryToUser", onDelete: SET_NULL)
   posts: [Post!]! @relation(name: "CategoryToPost", onDelete: CASCADE)
 }
 

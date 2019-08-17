@@ -1,5 +1,5 @@
 # source: http://localhost:4466
-# timestamp: Fri Aug 16 2019 19:28:29 GMT+0200 (CEST)
+# timestamp: Sat Aug 17 2019 19:48:42 GMT+0200 (CEST)
 
 type AggregateComment {
   count: Int!
@@ -571,6 +571,7 @@ type PostCategory implements Node {
   category_picture: String!
   updatedAt: DateTime!
   createdAt: DateTime!
+  author: User!
   posts(where: PostWhereInput, orderBy: PostOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Post!]
 }
 
@@ -589,7 +590,13 @@ input PostCategoryCreateInput {
   name: String!
   description: String!
   category_picture: String!
+  author: UserCreateOneWithoutCategoriesInput!
   posts: PostCreateManyWithoutCategoryInput
+}
+
+input PostCategoryCreateManyWithoutAuthorInput {
+  create: [PostCategoryCreateWithoutAuthorInput!]
+  connect: [PostCategoryWhereUniqueInput!]
 }
 
 input PostCategoryCreateOneWithoutPostsInput {
@@ -597,11 +604,20 @@ input PostCategoryCreateOneWithoutPostsInput {
   connect: PostCategoryWhereUniqueInput
 }
 
+input PostCategoryCreateWithoutAuthorInput {
+  id: ID
+  name: String!
+  description: String!
+  category_picture: String!
+  posts: PostCreateManyWithoutCategoryInput
+}
+
 input PostCategoryCreateWithoutPostsInput {
   id: ID
   name: String!
   description: String!
   category_picture: String!
+  author: UserCreateOneWithoutCategoriesInput!
 }
 
 """An edge in a connection."""
@@ -635,6 +651,221 @@ type PostCategoryPreviousValues {
   category_picture: String!
   updatedAt: DateTime!
   createdAt: DateTime!
+}
+
+input PostCategoryScalarWhereInput {
+  """Logical AND on all given filters."""
+  AND: [PostCategoryScalarWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [PostCategoryScalarWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [PostCategoryScalarWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
+  name: String
+
+  """All values that are not equal to given value."""
+  name_not: String
+
+  """All values that are contained in given list."""
+  name_in: [String!]
+
+  """All values that are not contained in given list."""
+  name_not_in: [String!]
+
+  """All values less than the given value."""
+  name_lt: String
+
+  """All values less than or equal the given value."""
+  name_lte: String
+
+  """All values greater than the given value."""
+  name_gt: String
+
+  """All values greater than or equal the given value."""
+  name_gte: String
+
+  """All values containing the given string."""
+  name_contains: String
+
+  """All values not containing the given string."""
+  name_not_contains: String
+
+  """All values starting with the given string."""
+  name_starts_with: String
+
+  """All values not starting with the given string."""
+  name_not_starts_with: String
+
+  """All values ending with the given string."""
+  name_ends_with: String
+
+  """All values not ending with the given string."""
+  name_not_ends_with: String
+  description: String
+
+  """All values that are not equal to given value."""
+  description_not: String
+
+  """All values that are contained in given list."""
+  description_in: [String!]
+
+  """All values that are not contained in given list."""
+  description_not_in: [String!]
+
+  """All values less than the given value."""
+  description_lt: String
+
+  """All values less than or equal the given value."""
+  description_lte: String
+
+  """All values greater than the given value."""
+  description_gt: String
+
+  """All values greater than or equal the given value."""
+  description_gte: String
+
+  """All values containing the given string."""
+  description_contains: String
+
+  """All values not containing the given string."""
+  description_not_contains: String
+
+  """All values starting with the given string."""
+  description_starts_with: String
+
+  """All values not starting with the given string."""
+  description_not_starts_with: String
+
+  """All values ending with the given string."""
+  description_ends_with: String
+
+  """All values not ending with the given string."""
+  description_not_ends_with: String
+  category_picture: String
+
+  """All values that are not equal to given value."""
+  category_picture_not: String
+
+  """All values that are contained in given list."""
+  category_picture_in: [String!]
+
+  """All values that are not contained in given list."""
+  category_picture_not_in: [String!]
+
+  """All values less than the given value."""
+  category_picture_lt: String
+
+  """All values less than or equal the given value."""
+  category_picture_lte: String
+
+  """All values greater than the given value."""
+  category_picture_gt: String
+
+  """All values greater than or equal the given value."""
+  category_picture_gte: String
+
+  """All values containing the given string."""
+  category_picture_contains: String
+
+  """All values not containing the given string."""
+  category_picture_not_contains: String
+
+  """All values starting with the given string."""
+  category_picture_starts_with: String
+
+  """All values not starting with the given string."""
+  category_picture_not_starts_with: String
+
+  """All values ending with the given string."""
+  category_picture_ends_with: String
+
+  """All values not ending with the given string."""
+  category_picture_not_ends_with: String
+  updatedAt: DateTime
+
+  """All values that are not equal to given value."""
+  updatedAt_not: DateTime
+
+  """All values that are contained in given list."""
+  updatedAt_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  updatedAt_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  updatedAt_lt: DateTime
+
+  """All values less than or equal the given value."""
+  updatedAt_lte: DateTime
+
+  """All values greater than the given value."""
+  updatedAt_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  updatedAt_gte: DateTime
+  createdAt: DateTime
+
+  """All values that are not equal to given value."""
+  createdAt_not: DateTime
+
+  """All values that are contained in given list."""
+  createdAt_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  createdAt_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  createdAt_lt: DateTime
+
+  """All values less than or equal the given value."""
+  createdAt_lte: DateTime
+
+  """All values greater than the given value."""
+  createdAt_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  createdAt_gte: DateTime
 }
 
 type PostCategorySubscriptionPayload {
@@ -678,13 +909,37 @@ input PostCategoryUpdateInput {
   name: String
   description: String
   category_picture: String
+  author: UserUpdateOneRequiredWithoutCategoriesInput
   posts: PostUpdateManyWithoutCategoryInput
+}
+
+input PostCategoryUpdateManyDataInput {
+  name: String
+  description: String
+  category_picture: String
 }
 
 input PostCategoryUpdateManyMutationInput {
   name: String
   description: String
   category_picture: String
+}
+
+input PostCategoryUpdateManyWithoutAuthorInput {
+  create: [PostCategoryCreateWithoutAuthorInput!]
+  connect: [PostCategoryWhereUniqueInput!]
+  set: [PostCategoryWhereUniqueInput!]
+  disconnect: [PostCategoryWhereUniqueInput!]
+  delete: [PostCategoryWhereUniqueInput!]
+  update: [PostCategoryUpdateWithWhereUniqueWithoutAuthorInput!]
+  updateMany: [PostCategoryUpdateManyWithWhereNestedInput!]
+  deleteMany: [PostCategoryScalarWhereInput!]
+  upsert: [PostCategoryUpsertWithWhereUniqueWithoutAuthorInput!]
+}
+
+input PostCategoryUpdateManyWithWhereNestedInput {
+  where: PostCategoryScalarWhereInput!
+  data: PostCategoryUpdateManyDataInput!
 }
 
 input PostCategoryUpdateOneRequiredWithoutPostsInput {
@@ -694,15 +949,34 @@ input PostCategoryUpdateOneRequiredWithoutPostsInput {
   upsert: PostCategoryUpsertWithoutPostsInput
 }
 
+input PostCategoryUpdateWithoutAuthorDataInput {
+  name: String
+  description: String
+  category_picture: String
+  posts: PostUpdateManyWithoutCategoryInput
+}
+
 input PostCategoryUpdateWithoutPostsDataInput {
   name: String
   description: String
   category_picture: String
+  author: UserUpdateOneRequiredWithoutCategoriesInput
+}
+
+input PostCategoryUpdateWithWhereUniqueWithoutAuthorInput {
+  where: PostCategoryWhereUniqueInput!
+  data: PostCategoryUpdateWithoutAuthorDataInput!
 }
 
 input PostCategoryUpsertWithoutPostsInput {
   update: PostCategoryUpdateWithoutPostsDataInput!
   create: PostCategoryCreateWithoutPostsInput!
+}
+
+input PostCategoryUpsertWithWhereUniqueWithoutAuthorInput {
+  where: PostCategoryWhereUniqueInput!
+  update: PostCategoryUpdateWithoutAuthorDataInput!
+  create: PostCategoryCreateWithoutAuthorInput!
 }
 
 input PostCategoryWhereInput {
@@ -918,6 +1192,7 @@ input PostCategoryWhereInput {
 
   """All values greater than or equal the given value."""
   createdAt_gte: DateTime
+  author: UserWhereInput
   posts_every: PostWhereInput
   posts_some: PostWhereInput
   posts_none: PostWhereInput
@@ -1669,6 +1944,7 @@ type User implements Node {
   profile_picture: String
   updatedAt: DateTime!
   createdAt: DateTime!
+  categories(where: PostCategoryWhereInput, orderBy: PostCategoryOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [PostCategory!]
   posts(where: PostWhereInput, orderBy: PostOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Post!]
   comments(where: CommentWhereInput, orderBy: CommentOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Comment!]
 }
@@ -1691,8 +1967,14 @@ input UserCreateInput {
   name: String!
   description: String
   profile_picture: String
+  categories: PostCategoryCreateManyWithoutAuthorInput
   posts: PostCreateManyWithoutAuthorInput
   comments: CommentCreateManyWithoutAuthorInput
+}
+
+input UserCreateOneWithoutCategoriesInput {
+  create: UserCreateWithoutCategoriesInput
+  connect: UserWhereUniqueInput
 }
 
 input UserCreateOneWithoutCommentsInput {
@@ -1705,6 +1987,18 @@ input UserCreateOneWithoutPostsInput {
   connect: UserWhereUniqueInput
 }
 
+input UserCreateWithoutCategoriesInput {
+  id: ID
+  type: UserType
+  email: String!
+  password: String!
+  name: String!
+  description: String
+  profile_picture: String
+  posts: PostCreateManyWithoutAuthorInput
+  comments: CommentCreateManyWithoutAuthorInput
+}
+
 input UserCreateWithoutCommentsInput {
   id: ID
   type: UserType
@@ -1713,6 +2007,7 @@ input UserCreateWithoutCommentsInput {
   name: String!
   description: String
   profile_picture: String
+  categories: PostCategoryCreateManyWithoutAuthorInput
   posts: PostCreateManyWithoutAuthorInput
 }
 
@@ -1724,6 +2019,7 @@ input UserCreateWithoutPostsInput {
   name: String!
   description: String
   profile_picture: String
+  categories: PostCategoryCreateManyWithoutAuthorInput
   comments: CommentCreateManyWithoutAuthorInput
 }
 
@@ -1818,6 +2114,7 @@ input UserUpdateInput {
   name: String
   description: String
   profile_picture: String
+  categories: PostCategoryUpdateManyWithoutAuthorInput
   posts: PostUpdateManyWithoutAuthorInput
   comments: CommentUpdateManyWithoutAuthorInput
 }
@@ -1829,6 +2126,13 @@ input UserUpdateManyMutationInput {
   name: String
   description: String
   profile_picture: String
+}
+
+input UserUpdateOneRequiredWithoutCategoriesInput {
+  create: UserCreateWithoutCategoriesInput
+  connect: UserWhereUniqueInput
+  update: UserUpdateWithoutCategoriesDataInput
+  upsert: UserUpsertWithoutCategoriesInput
 }
 
 input UserUpdateOneRequiredWithoutCommentsInput {
@@ -1845,6 +2149,17 @@ input UserUpdateOneRequiredWithoutPostsInput {
   upsert: UserUpsertWithoutPostsInput
 }
 
+input UserUpdateWithoutCategoriesDataInput {
+  type: UserType
+  email: String
+  password: String
+  name: String
+  description: String
+  profile_picture: String
+  posts: PostUpdateManyWithoutAuthorInput
+  comments: CommentUpdateManyWithoutAuthorInput
+}
+
 input UserUpdateWithoutCommentsDataInput {
   type: UserType
   email: String
@@ -1852,6 +2167,7 @@ input UserUpdateWithoutCommentsDataInput {
   name: String
   description: String
   profile_picture: String
+  categories: PostCategoryUpdateManyWithoutAuthorInput
   posts: PostUpdateManyWithoutAuthorInput
 }
 
@@ -1862,7 +2178,13 @@ input UserUpdateWithoutPostsDataInput {
   name: String
   description: String
   profile_picture: String
+  categories: PostCategoryUpdateManyWithoutAuthorInput
   comments: CommentUpdateManyWithoutAuthorInput
+}
+
+input UserUpsertWithoutCategoriesInput {
+  update: UserUpdateWithoutCategoriesDataInput!
+  create: UserCreateWithoutCategoriesInput!
 }
 
 input UserUpsertWithoutCommentsInput {
@@ -2178,6 +2500,9 @@ input UserWhereInput {
 
   """All values greater than or equal the given value."""
   createdAt_gte: DateTime
+  categories_every: PostCategoryWhereInput
+  categories_some: PostCategoryWhereInput
+  categories_none: PostCategoryWhereInput
   posts_every: PostWhereInput
   posts_some: PostWhereInput
   posts_none: PostWhereInput

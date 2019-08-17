@@ -68,6 +68,9 @@ const Mutation = {
 
     return prisma.mutation.deleteUser({ where: { id } });
   },
+  createPostCategory(_: any, args, { prisma, request }: Context) {
+    const userId: string = getUserId(request);
+  },
   createPost(_: any, { data }, { prisma, request }: Context): PostPromise {
     const userId: string = getUserId(request);
 
