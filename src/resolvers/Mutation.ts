@@ -1,12 +1,12 @@
 import * as bcrypt from 'bcrypt';
 import { Context } from '../models/context.interface';
-import { User, PostPromise, Post, PostNullablePromise } from '../../prisma/generated/prisma-client';
+import { User, PostPromise, Post, PostNullablePromise, Comment } from '../../prisma/generated/prisma-client';
 import { generateToken } from '../utils/generateToken';
 import { hashPassword } from '../utils/hashPassword';
 import { getUserId } from '../utils/getUserId';
 import { checkUserType } from '../utils/checkUserType';
 import { CustomError } from '../utils/customError';
-import { UpdateUserArgs, UpdatePostArgs, LoginArgs } from '../models/mutation.interfaces';
+import { UpdateUserArgs, UpdatePostArgs, LoginArgs, CreateCommentArgs } from '../models/mutation.interfaces';
 
 const Mutation = {
   async createUser(_: any, { data }, { prisma }): Promise<{ user: User; token: string }> {
@@ -104,7 +104,6 @@ const Mutation = {
   async deletePost(_: any, { id }, { prisma, request }): Promise<Post> {
     const userId: string = getUserId(request);
 
-    // @ts-ignore
     const post: PostNullablePromise = await prisma.query.post({ where: { id } });
 
     if (!post) {
@@ -114,6 +113,79 @@ const Mutation = {
     await checkUserType(prisma, { authorID: post.author, invokerID: userId });
 
     return prisma.mutation.deletePost({
+      where: {
+        id
+      }
+    });
+  },
+  async createComment(_: any, { text, post }: CreateCommentArgs, { prisma, request }: Context): Promise<Comment> {
+    const userId: string = getUserId(request);
+
+    const postExists = await prisma.exists.$exists.comment({
+      id: post,
+      post: {
+        published: true
+      }
+    });
+
+    if (!postExists) {
+      throw new CustomError('Unable to find post');
+    }
+
+    return prisma.mutation.createComment({
+      // @ts-ignore
+      data: {
+        text,
+        post: {
+          connect: {
+            id: post
+          }
+        },
+        author: {
+          connect: {
+            id: userId
+          }
+        }
+      }
+    });
+  },
+  async updateComment(_: any, { id }, { prisma, request }: Context): Promise<Comment> {
+    const userId: string = getUserId(request);
+
+    const commentExists = await prisma.exists.$exists.comment({
+      id,
+      author: {
+        id: userId
+      }
+    });
+
+    if (!commentExists) {
+      throw new CustomError('Unable to find comment');
+    }
+
+    return prisma.mutation.deleteComment({
+      // @ts-ignore
+      where: {
+        id
+      }
+    });
+  },
+  async deleteComment(_: any, { id }, { prisma, request }: Context) {
+    const userId: string = getUserId(request);
+
+    const commentExists = await prisma.exists.$exists.comment({
+      id,
+      author: {
+        id: userId
+      }
+    });
+
+    if (!commentExists) {
+      throw new CustomError('Unable to find comment');
+    }
+
+    return prisma.mutation.deleteComment({
+      // @ts-ignore
       where: {
         id
       }

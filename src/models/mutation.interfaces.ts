@@ -15,3 +15,8 @@ export interface UpdatePostArgs {
   id: string;
   data: PostUpdateInput;
 }
+
+export interface CreateCommentArgs {
+  text: string;
+  post: string;
+}
