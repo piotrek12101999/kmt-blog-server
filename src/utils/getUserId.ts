@@ -1,5 +1,6 @@
 import * as jwt from 'jsonwebtoken';
 import { ContextParameters } from 'graphql-yoga/dist/types';
+import { CustomError } from './customError';
 
 export function getUserId(request: ContextParameters, requireAuth: boolean = true) {
   const header: string = request.request.headers.authorization;
@@ -12,14 +13,8 @@ export function getUserId(request: ContextParameters, requireAuth: boolean = tru
   }
 
   if (requireAuth) {
-    throw new AuthError();
+    throw new CustomError('Authentication required');
   }
 
   return null;
-}
-
-export class AuthError extends Error {
-  constructor() {
-    super('Authentication required');
-  }
 }

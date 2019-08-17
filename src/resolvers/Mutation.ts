@@ -1,11 +1,12 @@
 import * as bcrypt from 'bcrypt';
 import { Context } from '../models/context.interface';
-import { User, UserUpdateInput } from '../../prisma/generated/prisma-client';
+import { User, PostPromise, Post, PostNullablePromise } from '../../prisma/generated/prisma-client';
 import { generateToken } from '../utils/generateToken';
 import { hashPassword } from '../utils/hashPassword';
 import { getUserId } from '../utils/getUserId';
 import { checkUserType } from '../utils/checkUserType';
-import { UpdateUserArgs } from '../models/mutation.interfaces';
+import { CustomError } from '../utils/customError';
+import { UpdateUserArgs, UpdatePostArgs, LoginArgs } from '../models/mutation.interfaces';
 
 const Mutation = {
   async createUser(_: any, { data }, { prisma }): Promise<{ user: User; token: string }> {
@@ -22,7 +23,7 @@ const Mutation = {
       token: generateToken(user.id)
     };
   },
-  async logIn(_: any, { data: { email, password } }, { prisma }): Promise<{ user: User; token: string }> {
+  async logIn(_: any, { data: { email, password } }: LoginArgs, { prisma }): Promise<{ user: User; token: string }> {
     const user: User = await prisma.query.user({ where: { email } });
 
     if (!user) {
@@ -67,24 +68,62 @@ const Mutation = {
 
     return prisma.mutation.deleteUser({ where: { id } });
   },
-  createPost(_: any, { data }, { prisma, request }: Context) {
+  createPost(_: any, { data }, { prisma, request }: Context): PostPromise {
     const userId: string = getUserId(request);
 
-    // return prisma.mutation.createPost({
-    //   ...args.data
-    // })
+    return prisma.mutation.createPost({
+      ...data,
+      author: {
+        connect: {
+          id: userId
+        }
+      }
+    });
+  },
+  async updatePost(_: any, { id, data }: UpdatePostArgs, { prisma, request }: Context): Promise<Post> {
+    const userId: string = getUserId(request);
+    // @ts-ignore
+    const postsExist = await prisma.exists.Post({
+      id,
+      author: {
+        id: userId
+      }
+    });
+
+    if (!postsExist) {
+      throw new CustomError('Unable to update post');
+    }
+
+    return prisma.mutation.updatePost({
+      where: {
+        id
+      },
+      data
+    });
+  },
+  async deletePost(_: any, { id }, { prisma, request }): Promise<Post> {
+    const userId: string = getUserId(request);
+
+    // @ts-ignore
+    const post: PostNullablePromise = await prisma.query.post({ where: { id } });
+
+    if (!post) {
+      throw new CustomError('Unable to delete post');
+    }
+
+    await checkUserType(prisma, { authorID: post.author, invokerID: userId });
+
+    return prisma.mutation.deletePost({
+      where: {
+        id
+      }
+    });
   }
 };
 
 class LoginError extends Error {
   constructor() {
     super('Unable to login');
-  }
-}
-
-class MutationError extends Error {
-  constructor(errorMessage: string) {
-    super(errorMessage);
   }
 }
 

@@ -3,7 +3,7 @@ import { PrismaOperations } from '../models/context.interface';
 import { CustomError } from './customError';
 
 interface UsersID {
-  authorID: string;
+  authorID: any;
   invokerID: string;
 }
 
