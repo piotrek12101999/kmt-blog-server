@@ -1,4 +1,4 @@
-import { UserWhereInput, PostWhereInput } from '../../generated/prisma-client';
+import { UserWhereInput, PostWhereInput } from '../../prisma/generated/prisma-client';
 import { CommentWhereInput } from '../../prisma/generated/prisma-client';
 
 export interface Pagination {

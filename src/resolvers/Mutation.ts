@@ -1,9 +1,11 @@
 import * as bcrypt from 'bcrypt';
 import { Context } from '../models/context.interface';
-import { User } from '../../prisma/generated/prisma-client';
+import { User, UserUpdateInput } from '../../prisma/generated/prisma-client';
 import { generateToken } from '../utils/generateToken';
 import { hashPassword } from '../utils/hashPassword';
 import { getUserId } from '../utils/getUserId';
+import { checkUserType } from '../utils/checkUserType';
+import { UpdateUserArgs } from '../models/mutation.interfaces';
 
 const Mutation = {
   async createUser(_: any, { data }, { prisma }): Promise<{ user: User; token: string }> {
@@ -38,19 +40,39 @@ const Mutation = {
       token: generateToken(user.id)
     };
   },
-  async deleteUser(_: any, { id }, { prisma, request} ) {
+  async updateUser(_: any, { id, data }: UpdateUserArgs, { prisma, request }: Context, info: any): Promise<User> {
     const userId: string = getUserId(request);
 
-    const userInvokingAction: User = await prisma.query.user({ where: {
-        id: userId
-      }
-    })
+    await checkUserType(prisma, { authorID: id, invokerID: userId });
 
-    if (userInvokingAction.id !== id && userInvokingAction.type !== 'ADMIN') {
-       throw new MutationError('Unable to delte user');
+    if (data.password) {
+      data.password = await hashPassword(data.password);
     }
 
-    return prisma.mutation.deleteUser({ where: { id } })
+    return prisma.mutation.updateUser(
+      {
+        where: {
+          id: userId
+        },
+        data
+      },
+      // @ts-ignore
+      info
+    );
+  },
+  async deleteUser(_: any, { id }, { prisma, request }): Promise<User> {
+    const userId: string = getUserId(request);
+
+    await checkUserType(prisma, { authorID: id, invokerID: userId });
+
+    return prisma.mutation.deleteUser({ where: { id } });
+  },
+  createPost(_: any, { data }, { prisma, request }: Context) {
+    const userId: string = getUserId(request);
+
+    // return prisma.mutation.createPost({
+    //   ...args.data
+    // })
   }
 };
 
