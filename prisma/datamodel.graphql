@@ -8,7 +8,6 @@ type User {
   profile_picture: String
   updatedAt: DateTime! @updatedAt
   createdAt: DateTime! @createdAt
-  categories: [PostCategory!]! @relation(name: "CategoryToUser", onDelete: CASCADE)
   posts: [Post!]! @relation(name: "PostToUser", onDelete: CASCADE)
   comments: [Comment!]! @relation(name: "CommentToUser", onDelete: CASCADE)
 }
@@ -24,22 +23,11 @@ type Post {
   subtitle: String
   body: String!
   published: Boolean @default(value: false)
+  tags: [String!]! @scalarList(strategy: RELATION)
   updatedAt: DateTime! @updatedAt
   createdAt: DateTime! @createdAt
-  category: PostCategory! @relation(name: "CategoryToPost", onDelete: SET_NULL)
   author: User! @relation(name: "PostToUser", onDelete: SET_NULL)
   comments: [Comment!]! @relation(name: "CommentToPost", onDelete: CASCADE)
-}
-
-type PostCategory {
-  id: ID! @id
-  name: String!
-  description: String!
-  category_picture: String!
-  updatedAt: DateTime! @updatedAt
-  createdAt: DateTime! @createdAt
-  author: User! @relation(name: "CategoryToUser", onDelete: SET_NULL)
-  posts: [Post!]! @relation(name: "CategoryToPost", onDelete: CASCADE)
 }
 
 type Comment {

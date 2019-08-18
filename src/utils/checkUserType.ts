@@ -10,8 +10,9 @@ interface UsersID {
 async function checkUserType(prisma: PrismaOperations, { authorID, invokerID }: UsersID): Promise<void> {
   // @ts-ignore
   const userInvokingAction: User = await prisma.query.user({ where: { id: invokerID } });
-
-  if (userInvokingAction.id !== authorID && userInvokingAction.type !== 'ADMIN') {
+  if (!userInvokingAction) {
+    throw new CustomError(`User performing action not found`);
+  } else if (userInvokingAction.id !== authorID && userInvokingAction.type !== 'ADMIN') {
     throw new CustomError(`User doesn't have required permission`);
   }
 }

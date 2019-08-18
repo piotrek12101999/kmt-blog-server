@@ -10,10 +10,6 @@ type AggregatePost {
   count: Int!
 }
 
-type AggregatePostCategory {
-  count: Int!
-}
-
 type AggregateUser {
   count: Int!
 }
@@ -305,12 +301,6 @@ type Mutation {
   upsertPost(where: PostWhereUniqueInput!, create: PostCreateInput!, update: PostUpdateInput!): Post!
   deletePost(where: PostWhereUniqueInput!): Post
   deleteManyPosts(where: PostWhereInput): BatchPayload!
-  createPostCategory(data: PostCategoryCreateInput!): PostCategory!
-  updatePostCategory(data: PostCategoryUpdateInput!, where: PostCategoryWhereUniqueInput!): PostCategory
-  updateManyPostCategories(data: PostCategoryUpdateManyMutationInput!, where: PostCategoryWhereInput): BatchPayload!
-  upsertPostCategory(where: PostCategoryWhereUniqueInput!, create: PostCategoryCreateInput!, update: PostCategoryUpdateInput!): PostCategory!
-  deletePostCategory(where: PostCategoryWhereUniqueInput!): PostCategory
-  deleteManyPostCategories(where: PostCategoryWhereInput): BatchPayload!
   createUser(data: UserCreateInput!): User!
   updateUser(data: UserUpdateInput!, where: UserWhereUniqueInput!): User
   updateManyUsers(data: UserUpdateManyMutationInput!, where: UserWhereInput): BatchPayload!
@@ -342,348 +332,11 @@ type Post {
   subtitle: String
   body: String!
   published: Boolean
+  tags: [String!]!
   updatedAt: DateTime!
   createdAt: DateTime!
-  category: PostCategory!
   author: User!
   comments(where: CommentWhereInput, orderBy: CommentOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Comment!]
-}
-
-type PostCategory {
-  id: ID!
-  name: String!
-  description: String!
-  category_picture: String!
-  updatedAt: DateTime!
-  createdAt: DateTime!
-  author: User!
-  posts(where: PostWhereInput, orderBy: PostOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Post!]
-}
-
-type PostCategoryConnection {
-  pageInfo: PageInfo!
-  edges: [PostCategoryEdge]!
-  aggregate: AggregatePostCategory!
-}
-
-input PostCategoryCreateInput {
-  id: ID
-  name: String!
-  description: String!
-  category_picture: String!
-  author: UserCreateOneWithoutCategoriesInput!
-  posts: PostCreateManyWithoutCategoryInput
-}
-
-input PostCategoryCreateManyWithoutAuthorInput {
-  create: [PostCategoryCreateWithoutAuthorInput!]
-  connect: [PostCategoryWhereUniqueInput!]
-}
-
-input PostCategoryCreateOneWithoutPostsInput {
-  create: PostCategoryCreateWithoutPostsInput
-  connect: PostCategoryWhereUniqueInput
-}
-
-input PostCategoryCreateWithoutAuthorInput {
-  id: ID
-  name: String!
-  description: String!
-  category_picture: String!
-  posts: PostCreateManyWithoutCategoryInput
-}
-
-input PostCategoryCreateWithoutPostsInput {
-  id: ID
-  name: String!
-  description: String!
-  category_picture: String!
-  author: UserCreateOneWithoutCategoriesInput!
-}
-
-type PostCategoryEdge {
-  node: PostCategory!
-  cursor: String!
-}
-
-enum PostCategoryOrderByInput {
-  id_ASC
-  id_DESC
-  name_ASC
-  name_DESC
-  description_ASC
-  description_DESC
-  category_picture_ASC
-  category_picture_DESC
-  updatedAt_ASC
-  updatedAt_DESC
-  createdAt_ASC
-  createdAt_DESC
-}
-
-type PostCategoryPreviousValues {
-  id: ID!
-  name: String!
-  description: String!
-  category_picture: String!
-  updatedAt: DateTime!
-  createdAt: DateTime!
-}
-
-input PostCategoryScalarWhereInput {
-  id: ID
-  id_not: ID
-  id_in: [ID!]
-  id_not_in: [ID!]
-  id_lt: ID
-  id_lte: ID
-  id_gt: ID
-  id_gte: ID
-  id_contains: ID
-  id_not_contains: ID
-  id_starts_with: ID
-  id_not_starts_with: ID
-  id_ends_with: ID
-  id_not_ends_with: ID
-  name: String
-  name_not: String
-  name_in: [String!]
-  name_not_in: [String!]
-  name_lt: String
-  name_lte: String
-  name_gt: String
-  name_gte: String
-  name_contains: String
-  name_not_contains: String
-  name_starts_with: String
-  name_not_starts_with: String
-  name_ends_with: String
-  name_not_ends_with: String
-  description: String
-  description_not: String
-  description_in: [String!]
-  description_not_in: [String!]
-  description_lt: String
-  description_lte: String
-  description_gt: String
-  description_gte: String
-  description_contains: String
-  description_not_contains: String
-  description_starts_with: String
-  description_not_starts_with: String
-  description_ends_with: String
-  description_not_ends_with: String
-  category_picture: String
-  category_picture_not: String
-  category_picture_in: [String!]
-  category_picture_not_in: [String!]
-  category_picture_lt: String
-  category_picture_lte: String
-  category_picture_gt: String
-  category_picture_gte: String
-  category_picture_contains: String
-  category_picture_not_contains: String
-  category_picture_starts_with: String
-  category_picture_not_starts_with: String
-  category_picture_ends_with: String
-  category_picture_not_ends_with: String
-  updatedAt: DateTime
-  updatedAt_not: DateTime
-  updatedAt_in: [DateTime!]
-  updatedAt_not_in: [DateTime!]
-  updatedAt_lt: DateTime
-  updatedAt_lte: DateTime
-  updatedAt_gt: DateTime
-  updatedAt_gte: DateTime
-  createdAt: DateTime
-  createdAt_not: DateTime
-  createdAt_in: [DateTime!]
-  createdAt_not_in: [DateTime!]
-  createdAt_lt: DateTime
-  createdAt_lte: DateTime
-  createdAt_gt: DateTime
-  createdAt_gte: DateTime
-  AND: [PostCategoryScalarWhereInput!]
-  OR: [PostCategoryScalarWhereInput!]
-  NOT: [PostCategoryScalarWhereInput!]
-}
-
-type PostCategorySubscriptionPayload {
-  mutation: MutationType!
-  node: PostCategory
-  updatedFields: [String!]
-  previousValues: PostCategoryPreviousValues
-}
-
-input PostCategorySubscriptionWhereInput {
-  mutation_in: [MutationType!]
-  updatedFields_contains: String
-  updatedFields_contains_every: [String!]
-  updatedFields_contains_some: [String!]
-  node: PostCategoryWhereInput
-  AND: [PostCategorySubscriptionWhereInput!]
-  OR: [PostCategorySubscriptionWhereInput!]
-  NOT: [PostCategorySubscriptionWhereInput!]
-}
-
-input PostCategoryUpdateInput {
-  name: String
-  description: String
-  category_picture: String
-  author: UserUpdateOneRequiredWithoutCategoriesInput
-  posts: PostUpdateManyWithoutCategoryInput
-}
-
-input PostCategoryUpdateManyDataInput {
-  name: String
-  description: String
-  category_picture: String
-}
-
-input PostCategoryUpdateManyMutationInput {
-  name: String
-  description: String
-  category_picture: String
-}
-
-input PostCategoryUpdateManyWithoutAuthorInput {
-  create: [PostCategoryCreateWithoutAuthorInput!]
-  delete: [PostCategoryWhereUniqueInput!]
-  connect: [PostCategoryWhereUniqueInput!]
-  set: [PostCategoryWhereUniqueInput!]
-  disconnect: [PostCategoryWhereUniqueInput!]
-  update: [PostCategoryUpdateWithWhereUniqueWithoutAuthorInput!]
-  upsert: [PostCategoryUpsertWithWhereUniqueWithoutAuthorInput!]
-  deleteMany: [PostCategoryScalarWhereInput!]
-  updateMany: [PostCategoryUpdateManyWithWhereNestedInput!]
-}
-
-input PostCategoryUpdateManyWithWhereNestedInput {
-  where: PostCategoryScalarWhereInput!
-  data: PostCategoryUpdateManyDataInput!
-}
-
-input PostCategoryUpdateOneRequiredWithoutPostsInput {
-  create: PostCategoryCreateWithoutPostsInput
-  update: PostCategoryUpdateWithoutPostsDataInput
-  upsert: PostCategoryUpsertWithoutPostsInput
-  connect: PostCategoryWhereUniqueInput
-}
-
-input PostCategoryUpdateWithoutAuthorDataInput {
-  name: String
-  description: String
-  category_picture: String
-  posts: PostUpdateManyWithoutCategoryInput
-}
-
-input PostCategoryUpdateWithoutPostsDataInput {
-  name: String
-  description: String
-  category_picture: String
-  author: UserUpdateOneRequiredWithoutCategoriesInput
-}
-
-input PostCategoryUpdateWithWhereUniqueWithoutAuthorInput {
-  where: PostCategoryWhereUniqueInput!
-  data: PostCategoryUpdateWithoutAuthorDataInput!
-}
-
-input PostCategoryUpsertWithoutPostsInput {
-  update: PostCategoryUpdateWithoutPostsDataInput!
-  create: PostCategoryCreateWithoutPostsInput!
-}
-
-input PostCategoryUpsertWithWhereUniqueWithoutAuthorInput {
-  where: PostCategoryWhereUniqueInput!
-  update: PostCategoryUpdateWithoutAuthorDataInput!
-  create: PostCategoryCreateWithoutAuthorInput!
-}
-
-input PostCategoryWhereInput {
-  id: ID
-  id_not: ID
-  id_in: [ID!]
-  id_not_in: [ID!]
-  id_lt: ID
-  id_lte: ID
-  id_gt: ID
-  id_gte: ID
-  id_contains: ID
-  id_not_contains: ID
-  id_starts_with: ID
-  id_not_starts_with: ID
-  id_ends_with: ID
-  id_not_ends_with: ID
-  name: String
-  name_not: String
-  name_in: [String!]
-  name_not_in: [String!]
-  name_lt: String
-  name_lte: String
-  name_gt: String
-  name_gte: String
-  name_contains: String
-  name_not_contains: String
-  name_starts_with: String
-  name_not_starts_with: String
-  name_ends_with: String
-  name_not_ends_with: String
-  description: String
-  description_not: String
-  description_in: [String!]
-  description_not_in: [String!]
-  description_lt: String
-  description_lte: String
-  description_gt: String
-  description_gte: String
-  description_contains: String
-  description_not_contains: String
-  description_starts_with: String
-  description_not_starts_with: String
-  description_ends_with: String
-  description_not_ends_with: String
-  category_picture: String
-  category_picture_not: String
-  category_picture_in: [String!]
-  category_picture_not_in: [String!]
-  category_picture_lt: String
-  category_picture_lte: String
-  category_picture_gt: String
-  category_picture_gte: String
-  category_picture_contains: String
-  category_picture_not_contains: String
-  category_picture_starts_with: String
-  category_picture_not_starts_with: String
-  category_picture_ends_with: String
-  category_picture_not_ends_with: String
-  updatedAt: DateTime
-  updatedAt_not: DateTime
-  updatedAt_in: [DateTime!]
-  updatedAt_not_in: [DateTime!]
-  updatedAt_lt: DateTime
-  updatedAt_lte: DateTime
-  updatedAt_gt: DateTime
-  updatedAt_gte: DateTime
-  createdAt: DateTime
-  createdAt_not: DateTime
-  createdAt_in: [DateTime!]
-  createdAt_not_in: [DateTime!]
-  createdAt_lt: DateTime
-  createdAt_lte: DateTime
-  createdAt_gt: DateTime
-  createdAt_gte: DateTime
-  author: UserWhereInput
-  posts_every: PostWhereInput
-  posts_some: PostWhereInput
-  posts_none: PostWhereInput
-  AND: [PostCategoryWhereInput!]
-  OR: [PostCategoryWhereInput!]
-  NOT: [PostCategoryWhereInput!]
-}
-
-input PostCategoryWhereUniqueInput {
-  id: ID
 }
 
 type PostConnection {
@@ -698,7 +351,7 @@ input PostCreateInput {
   subtitle: String
   body: String!
   published: Boolean
-  category: PostCategoryCreateOneWithoutPostsInput!
+  tags: PostCreatetagsInput
   author: UserCreateOneWithoutPostsInput!
   comments: CommentCreateManyWithoutPostInput
 }
@@ -708,14 +361,13 @@ input PostCreateManyWithoutAuthorInput {
   connect: [PostWhereUniqueInput!]
 }
 
-input PostCreateManyWithoutCategoryInput {
-  create: [PostCreateWithoutCategoryInput!]
-  connect: [PostWhereUniqueInput!]
-}
-
 input PostCreateOneWithoutCommentsInput {
   create: PostCreateWithoutCommentsInput
   connect: PostWhereUniqueInput
+}
+
+input PostCreatetagsInput {
+  set: [String!]
 }
 
 input PostCreateWithoutAuthorInput {
@@ -724,17 +376,7 @@ input PostCreateWithoutAuthorInput {
   subtitle: String
   body: String!
   published: Boolean
-  category: PostCategoryCreateOneWithoutPostsInput!
-  comments: CommentCreateManyWithoutPostInput
-}
-
-input PostCreateWithoutCategoryInput {
-  id: ID
-  title: String!
-  subtitle: String
-  body: String!
-  published: Boolean
-  author: UserCreateOneWithoutPostsInput!
+  tags: PostCreatetagsInput
   comments: CommentCreateManyWithoutPostInput
 }
 
@@ -744,7 +386,7 @@ input PostCreateWithoutCommentsInput {
   subtitle: String
   body: String!
   published: Boolean
-  category: PostCategoryCreateOneWithoutPostsInput!
+  tags: PostCreatetagsInput
   author: UserCreateOneWithoutPostsInput!
 }
 
@@ -776,6 +418,7 @@ type PostPreviousValues {
   subtitle: String
   body: String!
   published: Boolean
+  tags: [String!]!
   updatedAt: DateTime!
   createdAt: DateTime!
 }
@@ -883,7 +526,7 @@ input PostUpdateInput {
   subtitle: String
   body: String
   published: Boolean
-  category: PostCategoryUpdateOneRequiredWithoutPostsInput
+  tags: PostUpdatetagsInput
   author: UserUpdateOneRequiredWithoutPostsInput
   comments: CommentUpdateManyWithoutPostInput
 }
@@ -893,6 +536,7 @@ input PostUpdateManyDataInput {
   subtitle: String
   body: String
   published: Boolean
+  tags: PostUpdatetagsInput
 }
 
 input PostUpdateManyMutationInput {
@@ -900,6 +544,7 @@ input PostUpdateManyMutationInput {
   subtitle: String
   body: String
   published: Boolean
+  tags: PostUpdatetagsInput
 }
 
 input PostUpdateManyWithoutAuthorInput {
@@ -910,18 +555,6 @@ input PostUpdateManyWithoutAuthorInput {
   disconnect: [PostWhereUniqueInput!]
   update: [PostUpdateWithWhereUniqueWithoutAuthorInput!]
   upsert: [PostUpsertWithWhereUniqueWithoutAuthorInput!]
-  deleteMany: [PostScalarWhereInput!]
-  updateMany: [PostUpdateManyWithWhereNestedInput!]
-}
-
-input PostUpdateManyWithoutCategoryInput {
-  create: [PostCreateWithoutCategoryInput!]
-  delete: [PostWhereUniqueInput!]
-  connect: [PostWhereUniqueInput!]
-  set: [PostWhereUniqueInput!]
-  disconnect: [PostWhereUniqueInput!]
-  update: [PostUpdateWithWhereUniqueWithoutCategoryInput!]
-  upsert: [PostUpsertWithWhereUniqueWithoutCategoryInput!]
   deleteMany: [PostScalarWhereInput!]
   updateMany: [PostUpdateManyWithWhereNestedInput!]
 }
@@ -938,21 +571,16 @@ input PostUpdateOneRequiredWithoutCommentsInput {
   connect: PostWhereUniqueInput
 }
 
+input PostUpdatetagsInput {
+  set: [String!]
+}
+
 input PostUpdateWithoutAuthorDataInput {
   title: String
   subtitle: String
   body: String
   published: Boolean
-  category: PostCategoryUpdateOneRequiredWithoutPostsInput
-  comments: CommentUpdateManyWithoutPostInput
-}
-
-input PostUpdateWithoutCategoryDataInput {
-  title: String
-  subtitle: String
-  body: String
-  published: Boolean
-  author: UserUpdateOneRequiredWithoutPostsInput
+  tags: PostUpdatetagsInput
   comments: CommentUpdateManyWithoutPostInput
 }
 
@@ -961,18 +589,13 @@ input PostUpdateWithoutCommentsDataInput {
   subtitle: String
   body: String
   published: Boolean
-  category: PostCategoryUpdateOneRequiredWithoutPostsInput
+  tags: PostUpdatetagsInput
   author: UserUpdateOneRequiredWithoutPostsInput
 }
 
 input PostUpdateWithWhereUniqueWithoutAuthorInput {
   where: PostWhereUniqueInput!
   data: PostUpdateWithoutAuthorDataInput!
-}
-
-input PostUpdateWithWhereUniqueWithoutCategoryInput {
-  where: PostWhereUniqueInput!
-  data: PostUpdateWithoutCategoryDataInput!
 }
 
 input PostUpsertWithoutCommentsInput {
@@ -984,12 +607,6 @@ input PostUpsertWithWhereUniqueWithoutAuthorInput {
   where: PostWhereUniqueInput!
   update: PostUpdateWithoutAuthorDataInput!
   create: PostCreateWithoutAuthorInput!
-}
-
-input PostUpsertWithWhereUniqueWithoutCategoryInput {
-  where: PostWhereUniqueInput!
-  update: PostUpdateWithoutCategoryDataInput!
-  create: PostCreateWithoutCategoryInput!
 }
 
 input PostWhereInput {
@@ -1067,7 +684,6 @@ input PostWhereInput {
   createdAt_lte: DateTime
   createdAt_gt: DateTime
   createdAt_gte: DateTime
-  category: PostCategoryWhereInput
   author: UserWhereInput
   comments_every: CommentWhereInput
   comments_some: CommentWhereInput
@@ -1088,9 +704,6 @@ type Query {
   post(where: PostWhereUniqueInput!): Post
   posts(where: PostWhereInput, orderBy: PostOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Post]!
   postsConnection(where: PostWhereInput, orderBy: PostOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): PostConnection!
-  postCategory(where: PostCategoryWhereUniqueInput!): PostCategory
-  postCategories(where: PostCategoryWhereInput, orderBy: PostCategoryOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [PostCategory]!
-  postCategoriesConnection(where: PostCategoryWhereInput, orderBy: PostCategoryOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): PostCategoryConnection!
   user(where: UserWhereUniqueInput!): User
   users(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [User]!
   usersConnection(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): UserConnection!
@@ -1100,7 +713,6 @@ type Query {
 type Subscription {
   comment(where: CommentSubscriptionWhereInput): CommentSubscriptionPayload
   post(where: PostSubscriptionWhereInput): PostSubscriptionPayload
-  postCategory(where: PostCategorySubscriptionWhereInput): PostCategorySubscriptionPayload
   user(where: UserSubscriptionWhereInput): UserSubscriptionPayload
 }
 
@@ -1114,7 +726,6 @@ type User {
   profile_picture: String
   updatedAt: DateTime!
   createdAt: DateTime!
-  categories(where: PostCategoryWhereInput, orderBy: PostCategoryOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [PostCategory!]
   posts(where: PostWhereInput, orderBy: PostOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Post!]
   comments(where: CommentWhereInput, orderBy: CommentOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Comment!]
 }
@@ -1133,14 +744,8 @@ input UserCreateInput {
   name: String!
   description: String
   profile_picture: String
-  categories: PostCategoryCreateManyWithoutAuthorInput
   posts: PostCreateManyWithoutAuthorInput
   comments: CommentCreateManyWithoutAuthorInput
-}
-
-input UserCreateOneWithoutCategoriesInput {
-  create: UserCreateWithoutCategoriesInput
-  connect: UserWhereUniqueInput
 }
 
 input UserCreateOneWithoutCommentsInput {
@@ -1153,18 +758,6 @@ input UserCreateOneWithoutPostsInput {
   connect: UserWhereUniqueInput
 }
 
-input UserCreateWithoutCategoriesInput {
-  id: ID
-  type: UserType
-  email: String!
-  password: String!
-  name: String!
-  description: String
-  profile_picture: String
-  posts: PostCreateManyWithoutAuthorInput
-  comments: CommentCreateManyWithoutAuthorInput
-}
-
 input UserCreateWithoutCommentsInput {
   id: ID
   type: UserType
@@ -1173,7 +766,6 @@ input UserCreateWithoutCommentsInput {
   name: String!
   description: String
   profile_picture: String
-  categories: PostCategoryCreateManyWithoutAuthorInput
   posts: PostCreateManyWithoutAuthorInput
 }
 
@@ -1185,7 +777,6 @@ input UserCreateWithoutPostsInput {
   name: String!
   description: String
   profile_picture: String
-  categories: PostCategoryCreateManyWithoutAuthorInput
   comments: CommentCreateManyWithoutAuthorInput
 }
 
@@ -1257,7 +848,6 @@ input UserUpdateInput {
   name: String
   description: String
   profile_picture: String
-  categories: PostCategoryUpdateManyWithoutAuthorInput
   posts: PostUpdateManyWithoutAuthorInput
   comments: CommentUpdateManyWithoutAuthorInput
 }
@@ -1269,13 +859,6 @@ input UserUpdateManyMutationInput {
   name: String
   description: String
   profile_picture: String
-}
-
-input UserUpdateOneRequiredWithoutCategoriesInput {
-  create: UserCreateWithoutCategoriesInput
-  update: UserUpdateWithoutCategoriesDataInput
-  upsert: UserUpsertWithoutCategoriesInput
-  connect: UserWhereUniqueInput
 }
 
 input UserUpdateOneRequiredWithoutCommentsInput {
@@ -1292,17 +875,6 @@ input UserUpdateOneRequiredWithoutPostsInput {
   connect: UserWhereUniqueInput
 }
 
-input UserUpdateWithoutCategoriesDataInput {
-  type: UserType
-  email: String
-  password: String
-  name: String
-  description: String
-  profile_picture: String
-  posts: PostUpdateManyWithoutAuthorInput
-  comments: CommentUpdateManyWithoutAuthorInput
-}
-
 input UserUpdateWithoutCommentsDataInput {
   type: UserType
   email: String
@@ -1310,7 +882,6 @@ input UserUpdateWithoutCommentsDataInput {
   name: String
   description: String
   profile_picture: String
-  categories: PostCategoryUpdateManyWithoutAuthorInput
   posts: PostUpdateManyWithoutAuthorInput
 }
 
@@ -1321,13 +892,7 @@ input UserUpdateWithoutPostsDataInput {
   name: String
   description: String
   profile_picture: String
-  categories: PostCategoryUpdateManyWithoutAuthorInput
   comments: CommentUpdateManyWithoutAuthorInput
-}
-
-input UserUpsertWithoutCategoriesInput {
-  update: UserUpdateWithoutCategoriesDataInput!
-  create: UserCreateWithoutCategoriesInput!
 }
 
 input UserUpsertWithoutCommentsInput {
@@ -1445,9 +1010,6 @@ input UserWhereInput {
   createdAt_lte: DateTime
   createdAt_gt: DateTime
   createdAt_gte: DateTime
-  categories_every: PostCategoryWhereInput
-  categories_some: PostCategoryWhereInput
-  categories_none: PostCategoryWhereInput
   posts_every: PostWhereInput
   posts_some: PostWhereInput
   posts_none: PostWhereInput

@@ -4,8 +4,6 @@ type Query {
   posts(query: String, first: Int, skip: Int, after: String): [Post!]!
   post(id: ID!): Post!
   comments(first: Int, skip: Int, after: String): [Comment!]!
-  categories(query: String, first: Int, skip: Int, after: String): [PostCategory!]!
-  category(id: ID!): PostCategory!
 }
 
 type Mutation {
@@ -13,9 +11,6 @@ type Mutation {
   logIn(data: UserLoginInput!): AuthPayload!
   updateUser(id: ID!, data: UpdateUserInput!): User!
   deleteUser(id: ID!): User!
-  createPostCategory(data: CreatePostCategoryInput!): PostCategory!
-  updatePostCategory(id: ID!, data: UpdatePostCategoryInput!): PostCategory!
-  deletePostCategory(id: ID!): PostCategory!
   createPost(data: CreatePostInput!): Post!
   updatePost(id: ID!, data: UpdatePostInput!): Post!
   deletePost(id: ID!): Post!
@@ -41,16 +36,6 @@ type User {
   createdAt: String!
   posts: [Post!]!
   comments: [Comment!]!
-}
-
-type PostCategory {
-  id: ID!
-  name: String!
-  description: String!
-  category_picture: String!
-  updatedAt: String!
-  createdAt: String!
-  posts: [Post!]!
 }
 
 type Post {
@@ -88,18 +73,6 @@ input UpdateUserInput {
   password: String
   description: String
   profile_picture: String
-}
-
-input CreatePostCategoryInput {
-  name: String!
-  description: String!
-  category_picture: String!
-}
-
-input UpdatePostCategoryInput {
-  name: String!
-  description: String!
-  category_picture: String!
 }
 
 input CreatePostInput {

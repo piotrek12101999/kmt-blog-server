@@ -68,9 +68,6 @@ const Mutation = {
 
     return prisma.mutation.deleteUser({ where: { id } });
   },
-  createPostCategory(_: any, args, { prisma, request }: Context) {
-    const userId: string = getUserId(request);
-  },
   createPost(_: any, { data }, { prisma, request }: Context): PostPromise {
     const userId: string = getUserId(request);
 
@@ -124,7 +121,7 @@ const Mutation = {
   async createComment(_: any, { text, post }: CreateCommentArgs, { prisma, request }: Context): Promise<Comment> {
     const userId: string = getUserId(request);
 
-    const postExists = await prisma.exists.$exists.comment({
+    const postExists: boolean = await prisma.exists.$exists.comment({
       id: post,
       post: {
         published: true
@@ -155,7 +152,7 @@ const Mutation = {
   async updateComment(_: any, { id }, { prisma, request }: Context): Promise<Comment> {
     const userId: string = getUserId(request);
 
-    const commentExists = await prisma.exists.$exists.comment({
+    const commentExists: boolean = await prisma.exists.$exists.comment({
       id,
       author: {
         id: userId
@@ -176,7 +173,7 @@ const Mutation = {
   async deleteComment(_: any, { id }, { prisma, request }: Context) {
     const userId: string = getUserId(request);
 
-    const commentExists = await prisma.exists.$exists.comment({
+    const commentExists: boolean = await prisma.exists.$exists.comment({
       id,
       author: {
         id: userId

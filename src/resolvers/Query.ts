@@ -7,9 +7,7 @@ import {
   User,
   UserNullablePromise,
   Post,
-  Comment,
-  PostCategoryWhereInput,
-  PostCategory
+  Comment
 } from '../../prisma/generated/prisma-client';
 import { getUserId } from '../utils/getUserId';
 
@@ -77,30 +75,6 @@ const Query = {
   },
   comments(_: any, __: any, { prisma }: Context): FragmentableArray<Comment> {
     return prisma.query.comments();
-  },
-  categories(_: any, { query, first, skip, after }: Query, { prisma }: Context): FragmentableArray<PostCategory> {
-    const where: PostCategoryWhereInput = {
-      OR: [
-        {
-          name_contains: query
-        },
-        {
-          description_contains: query
-        }
-      ]
-    }
-
-    const opArgs: OperationArguments = {
-      first,
-      skip,
-      after,
-      where
-    }
-
-    return prisma.query.postCategories(opArgs);
-  },
-  category(_: any, { id }, { prisma }) {
-    return prisma.query.postCategory({ where: { id } })
   }
 };
 
