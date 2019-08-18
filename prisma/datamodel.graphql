@@ -1,3 +1,8 @@
+enum UserType {
+  ADMIN
+  USER
+}
+
 type User {
   id: ID! @id
   type: UserType! @default(value: USER)
@@ -12,22 +17,23 @@ type User {
   comments: [Comment!]! @relation(name: "CommentToUser", onDelete: CASCADE)
 }
 
-enum UserType {
-  ADMIN
-  USER
-}
-
 type Post {
   id: ID! @id
   title: String!
   subtitle: String
   body: String!
   published: Boolean @default(value: false)
-  tags: [String!]! @scalarList(strategy: RELATION)
   updatedAt: DateTime! @updatedAt
   createdAt: DateTime! @createdAt
+  tags: [Tag!]! @relation(name: "TagsToPosts", onDelete: CASCADE)
   author: User! @relation(name: "PostToUser", onDelete: SET_NULL)
   comments: [Comment!]! @relation(name: "CommentToPost", onDelete: CASCADE)
+}
+
+type Tag {
+  id: ID! @id
+  name: String! @unique
+  posts: [Post!]! @relation(name: "TagsToPosts", onDelete: SET_NULL)
 }
 
 type Comment {

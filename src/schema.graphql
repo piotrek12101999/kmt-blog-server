@@ -38,11 +38,20 @@ type User {
   comments: [Comment!]!
 }
 
+type Tag {
+  id: ID!
+  name: String!
+}
+
 type Post {
   id: ID!
   title: String!
+  subtitle: String
   body: String!
   published: Boolean!
+  updatedAt: String!
+  createdAt: String!
+  tags: [Tag!]!
   author: User!
   comments: [Comment!]!
 }
@@ -50,6 +59,8 @@ type Post {
 type Comment {
   id: ID!
   text: String!
+  updatedAt: String!
+  createdAt: String!
   author: User!
   post: Post!
 }
@@ -79,12 +90,14 @@ input CreatePostInput {
   title: String!
   body: String!
   published: Boolean!
+  tags: [Tag!]!
 }
 
 input UpdatePostInput {
   title: String
   body: String
   published: Boolean
+  tags: [String]
 }
 
 input CreateCommentInput {

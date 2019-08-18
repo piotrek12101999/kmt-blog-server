@@ -6,7 +6,14 @@ import { hashPassword } from '../utils/hashPassword';
 import { getUserId } from '../utils/getUserId';
 import { checkUserType } from '../utils/checkUserType';
 import { CustomError } from '../utils/customError';
-import { UpdateUserArgs, UpdatePostArgs, LoginArgs, CreateCommentArgs } from '../models/mutation.interfaces';
+import {
+  UpdateUserArgs,
+  UpdatePostArgs,
+  LoginArgs,
+  CreateCommentArgs,
+  CreatePostArgs
+} from '../models/mutation.interfaces';
+import { createTag } from '../utils/createTag';
 
 const Mutation = {
   async createUser(_: any, { data }, { prisma }): Promise<{ user: User; token: string }> {
@@ -68,7 +75,7 @@ const Mutation = {
 
     return prisma.mutation.deleteUser({ where: { id } });
   },
-  createPost(_: any, { data }, { prisma, request }: Context): PostPromise {
+  async createPost(_: any, { data }: CreatePostArgs, { prisma, request }: Context) {
     const userId: string = getUserId(request);
 
     return prisma.mutation.createPost({
@@ -77,6 +84,10 @@ const Mutation = {
         connect: {
           id: userId
         }
+      },
+      tags: {
+        // @ts-ignore
+        connect: [...data.tags]
       }
     });
   },
