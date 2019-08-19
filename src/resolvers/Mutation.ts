@@ -1,6 +1,6 @@
 import * as bcrypt from 'bcrypt';
 import { Context } from '../models/context.interface';
-import { User, PostPromise, Post, PostNullablePromise, Comment } from '../../prisma/generated/prisma-client';
+import { User, Post, Comment, Tag } from '../../prisma/generated/prisma-client';
 import { generateToken } from '../utils/generateToken';
 import { hashPassword } from '../utils/hashPassword';
 import { getUserId } from '../utils/getUserId';
@@ -11,9 +11,10 @@ import {
   UpdatePostArgs,
   LoginArgs,
   CreateCommentArgs,
-  CreatePostArgs
+  CreatePostArgs,
+  CreateTagArgs,
+  UpdateTagArgs
 } from '../models/mutation.interfaces';
-import { createTag } from '../utils/createTag';
 
 const Mutation = {
   async createUser(_: any, { data }, { prisma }): Promise<{ user: User; token: string }> {
@@ -75,19 +76,76 @@ const Mutation = {
 
     return prisma.mutation.deleteUser({ where: { id } });
   },
+  async createTag(_: any, { name }: CreateTagArgs, { prisma, request }: Context): Promise<Tag> {
+    const userId: string = getUserId(request);
+
+    // @ts-ignore
+    const user: User = await prisma.query.user({ where: { id: userId } });
+
+    if (!user) {
+      throw new CustomError('Authentication required');
+    }
+
+    if (user.type !== 'ADMIN') {
+      throw new CustomError(`User doesn't have required permission`);
+    }
+
+    // @ts-ignore
+    return prisma.mutation.createTag({ data: { name } });
+  },
+  async updateTag(_: any, { id, data: { name } }: UpdateTagArgs, { prisma, request }: Context): Promise<Tag> {
+    const userId: string = getUserId(request);
+
+    const user: User = await prisma.query.user({ id: userId });
+
+    if (user.type !== 'ADMIN') {
+      throw new Error(`User doesn't have required permission`);
+    }
+
+    return prisma.mutation.updateTag({
+      where: {
+        id
+      },
+      data: {
+        name
+      }
+    });
+  },
+  async deleteTag(_: any, { id }, { prisma, request }: Context): Promise<Tag> {
+    const userId: string = getUserId(request);
+
+    const user: User = await prisma.query.user({ id: userId });
+
+    if (user.type !== 'ADMIN') {
+      throw new Error(`User doesn't have required permission`);
+    }
+
+    // @ts-ignore
+    return prisma.mutation.deleteTag({ where: { id } });
+  },
   async createPost(_: any, { data }: CreatePostArgs, { prisma, request }: Context) {
     const userId: string = getUserId(request);
 
+    // @ts-ignore
+    const user: User = await prisma.query.user({ where: { id: userId } });
+
+    if (user.type !== 'ADMIN') {
+      throw new Error(`User doesn't have required permission`);
+    }
+
     return prisma.mutation.createPost({
-      ...data,
-      author: {
-        connect: {
-          id: userId
+      // @ts-ignore
+      data: {
+        ...data,
+        author: {
+          connect: {
+            id: userId
+          }
+        },
+        tags: {
+          // @ts-ignore
+          connect: [...data.tags]
         }
-      },
-      tags: {
-        // @ts-ignore
-        connect: [...data.tags]
       }
     });
   },
@@ -112,18 +170,17 @@ const Mutation = {
       data
     });
   },
-  async deletePost(_: any, { id }, { prisma, request }): Promise<Post> {
+  async deletePost(_: any, { id }, { prisma, request }: Context): Promise<Post> {
     const userId: string = getUserId(request);
 
-    const post: PostNullablePromise = await prisma.query.post({ where: { id } });
+    const postExists = await prisma.exists.$exists.post({ id, author: { id: userId } });
 
-    if (!post) {
-      throw new CustomError('Unable to delete post');
+    if (!postExists) {
+      throw new CustomError('Unable to find post');
     }
 
-    await checkUserType(prisma, { authorID: post.author, invokerID: userId });
-
     return prisma.mutation.deletePost({
+      // @ts-ignore
       where: {
         id
       }

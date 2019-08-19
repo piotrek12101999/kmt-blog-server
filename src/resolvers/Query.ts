@@ -7,7 +7,9 @@ import {
   User,
   UserNullablePromise,
   Post,
-  Comment
+  Comment,
+  TagWhereInput,
+  Tag
 } from '../../prisma/generated/prisma-client';
 import { getUserId } from '../utils/getUserId';
 
@@ -30,7 +32,22 @@ const Query = {
   user(_: any, { id }, { prisma }): UserNullablePromise {
     return prisma.query.user({ where: { id } });
   },
-  posts(_: any, { query, first, skip, after }: Query, { prisma }: Context): FragmentableArray<Post> {
+  tags(_: any, { query, first, skip, after }: Query, { prisma }: Context, info: any): FragmentableArray<Tag> {
+    const where: TagWhereInput = {
+      name_contains: query
+    };
+
+    const opArgs: OperationArguments = {
+      first,
+      skip,
+      after,
+      where
+    };
+
+    // @ts-ignore
+    return prisma.query.tags(opArgs, info);
+  },
+  posts(_: any, { query, first, skip, after }: Query, { prisma }: Context, info: any): FragmentableArray<Post> {
     const where: PostWhereInput = {
       published: true,
       OR: [
@@ -50,7 +67,8 @@ const Query = {
       where
     };
 
-    return prisma.query.posts(opArgs);
+    // @ts-ignore
+    return prisma.query.posts(opArgs, info);
   },
   async post(_: any, { id }, { prisma, request }: Context): Promise<Post> {
     const userId: string = getUserId(request);

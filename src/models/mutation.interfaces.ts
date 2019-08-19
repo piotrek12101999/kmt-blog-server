@@ -12,6 +12,18 @@ export interface UpdateUserArgs {
   data: UserUpdateInput;
 }
 
+export interface CreateTagArgs {
+  name: string;
+}
+
+interface UpdateTagData extends CreateTagArgs {
+  posts: string[];
+}
+
+export interface UpdateTagArgs {
+  id: string;
+  data: UpdateTagData;
+}
 export interface CreatePostArgs {
   data: PostCreateInput;
 }

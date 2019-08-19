@@ -1,6 +1,8 @@
 type Query {
   users(query: String, first: Int, skip: Int, after: String): [User!]!
-  user(id: ID!): User
+  user(id: ID!): User!
+  tags(query: String, first: Int, skip: Int, after: String): [Tag!]!
+  tag(id: ID!): Tag!
   posts(query: String, first: Int, skip: Int, after: String): [Post!]!
   post(id: ID!): Post!
   comments(first: Int, skip: Int, after: String): [Comment!]!
@@ -11,6 +13,9 @@ type Mutation {
   logIn(data: UserLoginInput!): AuthPayload!
   updateUser(id: ID!, data: UpdateUserInput!): User!
   deleteUser(id: ID!): User!
+  createTag(name: String!): Tag!
+  updateTag(id: ID!, data: UpdateTagInput!): Tag!
+  deleteTag(id: ID!): Tag!
   createPost(data: CreatePostInput!): Post!
   updatePost(id: ID!, data: UpdatePostInput!): Post!
   deletePost(id: ID!): Post!
@@ -41,6 +46,7 @@ type User {
 type Tag {
   id: ID!
   name: String!
+  posts: [Post!]!
 }
 
 type Post {
@@ -86,16 +92,27 @@ input UpdateUserInput {
   profile_picture: String
 }
 
+input UpdateTagInput {
+  name: String
+  posts: [ID!]
+}
+
+input ConnectTagToPost {
+  id: ID!
+}
+
 input CreatePostInput {
   title: String!
   body: String!
+  subtitle: String
   published: Boolean!
-  tags: [Tag!]!
+  tags: [ConnectTagToPost!]!
 }
 
 input UpdatePostInput {
   title: String
   body: String
+  subtitle: String
   published: Boolean
   tags: [String]
 }
