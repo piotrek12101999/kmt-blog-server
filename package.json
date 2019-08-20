@@ -6,7 +6,8 @@
   "scripts": {
     "start": "nodemon",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "get-schema": "graphql get-schema -p prisma"
+    "get-schema": "graphql get-schema -p prisma",
+    "build": "rimraf dist && tsc"
   },
   "author": "Piotr Świątek",
   "license": "ISC",
@@ -19,7 +20,8 @@
     "graphql-yoga": "^1.18.1",
     "jsonwebtoken": "^8.5.1",
     "prisma-binding": "^2.3.15",
-    "prisma-client-lib": "^1.34.5"
+    "prisma-client-lib": "^1.34.5",
+    "rimraf": "^3.0.0"
   },
   "devDependencies": {
     "nodemon": "^1.19.1",

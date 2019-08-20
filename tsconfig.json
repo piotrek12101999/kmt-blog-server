@@ -1,6 +1,6 @@
 {
     "compilerOptions": {
-        "lib": ["es2016", "esnext.asynciterable"],
+        "lib": ["es2016", "esnext.asynciterable", "dom"],
         "resolveJsonModule": true,
         "noImplicitThis": true,
         "alwaysStrict": true,
