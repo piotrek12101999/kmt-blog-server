@@ -56,6 +56,11 @@ const Query = {
         },
         {
           subtitle_contains: query
+        },
+        {
+          tags_some: {
+            name_contains: query
+          }
         }
       ]
     };

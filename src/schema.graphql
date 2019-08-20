@@ -114,7 +114,7 @@ input UpdatePostInput {
   body: String
   subtitle: String
   published: Boolean
-  tags: [String]
+  tags: [ConnectTagToPost]
 }
 
 input CreateCommentInput {

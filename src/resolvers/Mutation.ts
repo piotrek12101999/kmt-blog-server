@@ -123,7 +123,7 @@ const Mutation = {
     // @ts-ignore
     return prisma.mutation.deleteTag({ where: { id } });
   },
-  async createPost(_: any, { data }: CreatePostArgs, { prisma, request }: Context) {
+  async createPost(_: any, { data }: CreatePostArgs, { prisma, request }: Context): Promise<Post> {
     const userId: string = getUserId(request);
 
     // @ts-ignore
@@ -149,19 +149,25 @@ const Mutation = {
       }
     });
   },
-  async updatePost(_: any, { id, data }: UpdatePostArgs, { prisma, request }: Context): Promise<Post> {
+  async updatePost(_: any, { id, data }: UpdatePostArgs, { prisma, request }: Context) {
     const userId: string = getUserId(request);
-    // @ts-ignore
-    const postsExist = await prisma.exists.Post({
+
+    const postsExist: boolean = await prisma.exists.$exists.post({
       id,
       author: {
         id: userId
       }
     });
 
+    const postTags: Tag[] = await prisma.query.tags({ where: { posts_some: { id } } });
+
+    const userAdminExists = await prisma.exists.user({ id: userId });
+
     if (!postsExist) {
       throw new CustomError('Unable to update post');
     }
+
+    console.log(postTags);
 
     return prisma.mutation.updatePost({
       where: {
@@ -238,7 +244,7 @@ const Mutation = {
       }
     });
   },
-  async deleteComment(_: any, { id }, { prisma, request }: Context) {
+  async deleteComment(_: any, { id }, { prisma, request }: Context): Promise<Comment> {
     const userId: string = getUserId(request);
 
     const commentExists: boolean = await prisma.exists.$exists.comment({
