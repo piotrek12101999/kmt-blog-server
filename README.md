@@ -22,7 +22,7 @@ I'm aware that steps that I'm about to list down below can be quite boring or su
 P.S I'm human, <strike> I make mistakes </strike> so this project might have some things that are overengineered or just stupid and can be done better, feel free to contribute then!
 <br />
 <br />
-P.S 2 Yeah I'm aware of `@ts-ignore`
+P.S 2 Yeah I'm aware and ashamed of `@ts-ignore`
 
 Run `npm start` for a dev server. Navigate to `http://localhost:4000/`.
 
@@ -80,6 +80,8 @@ Finally run `npm start` and navigate to localhost:4000
 
 
 ### Additional informations
+
+Front-end repo yet to be added
 
 For more informations or help contact mr Marek Sentfleben, mr Michal Sikorski or [Piotr Świątek](https://github.com/piotrek12101999)
 
