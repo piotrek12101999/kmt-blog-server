@@ -1,11 +1,15 @@
 # source: http://localhost:4466
-# timestamp: Thu Aug 15 2019 00:00:13 GMT+0200 (CEST)
+# timestamp: Sun Aug 18 2019 23:33:13 GMT+0200 (CEST)
 
 type AggregateComment {
   count: Int!
 }
 
 type AggregatePost {
+  count: Int!
+}
+
+type AggregateTag {
   count: Int!
 }
 
@@ -245,9 +249,7 @@ input CommentSubscriptionWhereInput {
   """Logical NOT on all given filters combined by AND."""
   NOT: [CommentSubscriptionWhereInput!]
 
-  """
-  The subscription event gets dispatched when it's listed in mutation_in
-  """
+  """The subscription event gets dispatched when it's listed in mutation_in"""
   mutation_in: [MutationType!]
 
   """
@@ -497,21 +499,27 @@ scalar Long
 type Mutation {
   createUser(data: UserCreateInput!): User!
   createPost(data: PostCreateInput!): Post!
+  createTag(data: TagCreateInput!): Tag!
   createComment(data: CommentCreateInput!): Comment!
   updateUser(data: UserUpdateInput!, where: UserWhereUniqueInput!): User
   updatePost(data: PostUpdateInput!, where: PostWhereUniqueInput!): Post
+  updateTag(data: TagUpdateInput!, where: TagWhereUniqueInput!): Tag
   updateComment(data: CommentUpdateInput!, where: CommentWhereUniqueInput!): Comment
   deleteUser(where: UserWhereUniqueInput!): User
   deletePost(where: PostWhereUniqueInput!): Post
+  deleteTag(where: TagWhereUniqueInput!): Tag
   deleteComment(where: CommentWhereUniqueInput!): Comment
   upsertUser(where: UserWhereUniqueInput!, create: UserCreateInput!, update: UserUpdateInput!): User!
   upsertPost(where: PostWhereUniqueInput!, create: PostCreateInput!, update: PostUpdateInput!): Post!
+  upsertTag(where: TagWhereUniqueInput!, create: TagCreateInput!, update: TagUpdateInput!): Tag!
   upsertComment(where: CommentWhereUniqueInput!, create: CommentCreateInput!, update: CommentUpdateInput!): Comment!
   updateManyUsers(data: UserUpdateManyMutationInput!, where: UserWhereInput): BatchPayload!
   updateManyPosts(data: PostUpdateManyMutationInput!, where: PostWhereInput): BatchPayload!
+  updateManyTags(data: TagUpdateManyMutationInput!, where: TagWhereInput): BatchPayload!
   updateManyComments(data: CommentUpdateManyMutationInput!, where: CommentWhereInput): BatchPayload!
   deleteManyUsers(where: UserWhereInput): BatchPayload!
   deleteManyPosts(where: PostWhereInput): BatchPayload!
+  deleteManyTags(where: TagWhereInput): BatchPayload!
   deleteManyComments(where: CommentWhereInput): BatchPayload!
   executeRaw(database: PrismaDatabase, query: String!): Json!
 }
@@ -551,6 +559,7 @@ type Post implements Node {
   published: Boolean
   updatedAt: DateTime!
   createdAt: DateTime!
+  tags(where: TagWhereInput, orderBy: TagOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Tag!]
   author: User!
   comments(where: CommentWhereInput, orderBy: CommentOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Comment!]
 }
@@ -571,12 +580,18 @@ input PostCreateInput {
   subtitle: String
   body: String!
   published: Boolean
+  tags: TagCreateManyWithoutPostsInput
   author: UserCreateOneWithoutPostsInput!
   comments: CommentCreateManyWithoutPostInput
 }
 
 input PostCreateManyWithoutAuthorInput {
   create: [PostCreateWithoutAuthorInput!]
+  connect: [PostWhereUniqueInput!]
+}
+
+input PostCreateManyWithoutTagsInput {
+  create: [PostCreateWithoutTagsInput!]
   connect: [PostWhereUniqueInput!]
 }
 
@@ -591,6 +606,7 @@ input PostCreateWithoutAuthorInput {
   subtitle: String
   body: String!
   published: Boolean
+  tags: TagCreateManyWithoutPostsInput
   comments: CommentCreateManyWithoutPostInput
 }
 
@@ -600,7 +616,18 @@ input PostCreateWithoutCommentsInput {
   subtitle: String
   body: String!
   published: Boolean
+  tags: TagCreateManyWithoutPostsInput
   author: UserCreateOneWithoutPostsInput!
+}
+
+input PostCreateWithoutTagsInput {
+  id: ID
+  title: String!
+  subtitle: String
+  body: String!
+  published: Boolean
+  author: UserCreateOneWithoutPostsInput!
+  comments: CommentCreateManyWithoutPostInput
 }
 
 """An edge in a connection."""
@@ -875,9 +902,7 @@ input PostSubscriptionWhereInput {
   """Logical NOT on all given filters combined by AND."""
   NOT: [PostSubscriptionWhereInput!]
 
-  """
-  The subscription event gets dispatched when it's listed in mutation_in
-  """
+  """The subscription event gets dispatched when it's listed in mutation_in"""
   mutation_in: [MutationType!]
 
   """
@@ -902,6 +927,7 @@ input PostUpdateInput {
   subtitle: String
   body: String
   published: Boolean
+  tags: TagUpdateManyWithoutPostsInput
   author: UserUpdateOneRequiredWithoutPostsInput
   comments: CommentUpdateManyWithoutPostInput
 }
@@ -932,6 +958,18 @@ input PostUpdateManyWithoutAuthorInput {
   upsert: [PostUpsertWithWhereUniqueWithoutAuthorInput!]
 }
 
+input PostUpdateManyWithoutTagsInput {
+  create: [PostCreateWithoutTagsInput!]
+  connect: [PostWhereUniqueInput!]
+  set: [PostWhereUniqueInput!]
+  disconnect: [PostWhereUniqueInput!]
+  delete: [PostWhereUniqueInput!]
+  update: [PostUpdateWithWhereUniqueWithoutTagsInput!]
+  updateMany: [PostUpdateManyWithWhereNestedInput!]
+  deleteMany: [PostScalarWhereInput!]
+  upsert: [PostUpsertWithWhereUniqueWithoutTagsInput!]
+}
+
 input PostUpdateManyWithWhereNestedInput {
   where: PostScalarWhereInput!
   data: PostUpdateManyDataInput!
@@ -949,6 +987,7 @@ input PostUpdateWithoutAuthorDataInput {
   subtitle: String
   body: String
   published: Boolean
+  tags: TagUpdateManyWithoutPostsInput
   comments: CommentUpdateManyWithoutPostInput
 }
 
@@ -957,12 +996,27 @@ input PostUpdateWithoutCommentsDataInput {
   subtitle: String
   body: String
   published: Boolean
+  tags: TagUpdateManyWithoutPostsInput
   author: UserUpdateOneRequiredWithoutPostsInput
+}
+
+input PostUpdateWithoutTagsDataInput {
+  title: String
+  subtitle: String
+  body: String
+  published: Boolean
+  author: UserUpdateOneRequiredWithoutPostsInput
+  comments: CommentUpdateManyWithoutPostInput
 }
 
 input PostUpdateWithWhereUniqueWithoutAuthorInput {
   where: PostWhereUniqueInput!
   data: PostUpdateWithoutAuthorDataInput!
+}
+
+input PostUpdateWithWhereUniqueWithoutTagsInput {
+  where: PostWhereUniqueInput!
+  data: PostUpdateWithoutTagsDataInput!
 }
 
 input PostUpsertWithoutCommentsInput {
@@ -974,6 +1028,12 @@ input PostUpsertWithWhereUniqueWithoutAuthorInput {
   where: PostWhereUniqueInput!
   update: PostUpdateWithoutAuthorDataInput!
   create: PostCreateWithoutAuthorInput!
+}
+
+input PostUpsertWithWhereUniqueWithoutTagsInput {
+  where: PostWhereUniqueInput!
+  update: PostUpdateWithoutTagsDataInput!
+  create: PostCreateWithoutTagsInput!
 }
 
 input PostWhereInput {
@@ -1193,6 +1253,9 @@ input PostWhereInput {
 
   """All values greater than or equal the given value."""
   createdAt_gte: DateTime
+  tags_every: TagWhereInput
+  tags_some: TagWhereInput
+  tags_none: TagWhereInput
   author: UserWhereInput
   comments_every: CommentWhereInput
   comments_some: CommentWhereInput
@@ -1210,12 +1273,15 @@ enum PrismaDatabase {
 type Query {
   users(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [User]!
   posts(where: PostWhereInput, orderBy: PostOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Post]!
+  tags(where: TagWhereInput, orderBy: TagOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Tag]!
   comments(where: CommentWhereInput, orderBy: CommentOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Comment]!
   user(where: UserWhereUniqueInput!): User
   post(where: PostWhereUniqueInput!): Post
+  tag(where: TagWhereUniqueInput!): Tag
   comment(where: CommentWhereUniqueInput!): Comment
   usersConnection(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): UserConnection!
   postsConnection(where: PostWhereInput, orderBy: PostOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): PostConnection!
+  tagsConnection(where: TagWhereInput, orderBy: TagOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): TagConnection!
   commentsConnection(where: CommentWhereInput, orderBy: CommentOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): CommentConnection!
 
   """Fetches an object given its ID"""
@@ -1228,7 +1294,333 @@ type Query {
 type Subscription {
   user(where: UserSubscriptionWhereInput): UserSubscriptionPayload
   post(where: PostSubscriptionWhereInput): PostSubscriptionPayload
+  tag(where: TagSubscriptionWhereInput): TagSubscriptionPayload
   comment(where: CommentSubscriptionWhereInput): CommentSubscriptionPayload
+}
+
+type Tag implements Node {
+  id: ID!
+  name: String!
+  posts(where: PostWhereInput, orderBy: PostOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Post!]
+}
+
+"""A connection to a list of items."""
+type TagConnection {
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """A list of edges."""
+  edges: [TagEdge]!
+  aggregate: AggregateTag!
+}
+
+input TagCreateInput {
+  id: ID
+  name: String!
+  posts: PostCreateManyWithoutTagsInput
+}
+
+input TagCreateManyWithoutPostsInput {
+  create: [TagCreateWithoutPostsInput!]
+  connect: [TagWhereUniqueInput!]
+}
+
+input TagCreateWithoutPostsInput {
+  id: ID
+  name: String!
+}
+
+"""An edge in a connection."""
+type TagEdge {
+  """The item at the end of the edge."""
+  node: Tag!
+
+  """A cursor for use in pagination."""
+  cursor: String!
+}
+
+enum TagOrderByInput {
+  id_ASC
+  id_DESC
+  name_ASC
+  name_DESC
+}
+
+type TagPreviousValues {
+  id: ID!
+  name: String!
+}
+
+input TagScalarWhereInput {
+  """Logical AND on all given filters."""
+  AND: [TagScalarWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [TagScalarWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [TagScalarWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
+  name: String
+
+  """All values that are not equal to given value."""
+  name_not: String
+
+  """All values that are contained in given list."""
+  name_in: [String!]
+
+  """All values that are not contained in given list."""
+  name_not_in: [String!]
+
+  """All values less than the given value."""
+  name_lt: String
+
+  """All values less than or equal the given value."""
+  name_lte: String
+
+  """All values greater than the given value."""
+  name_gt: String
+
+  """All values greater than or equal the given value."""
+  name_gte: String
+
+  """All values containing the given string."""
+  name_contains: String
+
+  """All values not containing the given string."""
+  name_not_contains: String
+
+  """All values starting with the given string."""
+  name_starts_with: String
+
+  """All values not starting with the given string."""
+  name_not_starts_with: String
+
+  """All values ending with the given string."""
+  name_ends_with: String
+
+  """All values not ending with the given string."""
+  name_not_ends_with: String
+}
+
+type TagSubscriptionPayload {
+  mutation: MutationType!
+  node: Tag
+  updatedFields: [String!]
+  previousValues: TagPreviousValues
+}
+
+input TagSubscriptionWhereInput {
+  """Logical AND on all given filters."""
+  AND: [TagSubscriptionWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [TagSubscriptionWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [TagSubscriptionWhereInput!]
+
+  """The subscription event gets dispatched when it's listed in mutation_in"""
+  mutation_in: [MutationType!]
+
+  """
+  The subscription event gets only dispatched when one of the updated fields names is included in this list
+  """
+  updatedFields_contains: String
+
+  """
+  The subscription event gets only dispatched when all of the field names included in this list have been updated
+  """
+  updatedFields_contains_every: [String!]
+
+  """
+  The subscription event gets only dispatched when some of the field names included in this list have been updated
+  """
+  updatedFields_contains_some: [String!]
+  node: TagWhereInput
+}
+
+input TagUpdateInput {
+  name: String
+  posts: PostUpdateManyWithoutTagsInput
+}
+
+input TagUpdateManyDataInput {
+  name: String
+}
+
+input TagUpdateManyMutationInput {
+  name: String
+}
+
+input TagUpdateManyWithoutPostsInput {
+  create: [TagCreateWithoutPostsInput!]
+  connect: [TagWhereUniqueInput!]
+  set: [TagWhereUniqueInput!]
+  disconnect: [TagWhereUniqueInput!]
+  delete: [TagWhereUniqueInput!]
+  update: [TagUpdateWithWhereUniqueWithoutPostsInput!]
+  updateMany: [TagUpdateManyWithWhereNestedInput!]
+  deleteMany: [TagScalarWhereInput!]
+  upsert: [TagUpsertWithWhereUniqueWithoutPostsInput!]
+}
+
+input TagUpdateManyWithWhereNestedInput {
+  where: TagScalarWhereInput!
+  data: TagUpdateManyDataInput!
+}
+
+input TagUpdateWithoutPostsDataInput {
+  name: String
+}
+
+input TagUpdateWithWhereUniqueWithoutPostsInput {
+  where: TagWhereUniqueInput!
+  data: TagUpdateWithoutPostsDataInput!
+}
+
+input TagUpsertWithWhereUniqueWithoutPostsInput {
+  where: TagWhereUniqueInput!
+  update: TagUpdateWithoutPostsDataInput!
+  create: TagCreateWithoutPostsInput!
+}
+
+input TagWhereInput {
+  """Logical AND on all given filters."""
+  AND: [TagWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [TagWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [TagWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
+  name: String
+
+  """All values that are not equal to given value."""
+  name_not: String
+
+  """All values that are contained in given list."""
+  name_in: [String!]
+
+  """All values that are not contained in given list."""
+  name_not_in: [String!]
+
+  """All values less than the given value."""
+  name_lt: String
+
+  """All values less than or equal the given value."""
+  name_lte: String
+
+  """All values greater than the given value."""
+  name_gt: String
+
+  """All values greater than or equal the given value."""
+  name_gte: String
+
+  """All values containing the given string."""
+  name_contains: String
+
+  """All values not containing the given string."""
+  name_not_contains: String
+
+  """All values starting with the given string."""
+  name_starts_with: String
+
+  """All values not starting with the given string."""
+  name_not_starts_with: String
+
+  """All values ending with the given string."""
+  name_ends_with: String
+
+  """All values not ending with the given string."""
+  name_not_ends_with: String
+  posts_every: PostWhereInput
+  posts_some: PostWhereInput
+  posts_none: PostWhereInput
+}
+
+input TagWhereUniqueInput {
+  id: ID
+  name: String
 }
 
 type User implements Node {
@@ -1358,9 +1750,7 @@ input UserSubscriptionWhereInput {
   """Logical NOT on all given filters combined by AND."""
   NOT: [UserSubscriptionWhereInput!]
 
-  """
-  The subscription event gets dispatched when it's listed in mutation_in
-  """
+  """The subscription event gets dispatched when it's listed in mutation_in"""
   mutation_in: [MutationType!]
 
   """

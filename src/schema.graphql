@@ -1,29 +1,74 @@
 type Query {
   users(query: String, first: Int, skip: Int, after: String): [User!]!
+  user(id: ID!): User!
+  tags(query: String, first: Int, skip: Int, after: String): [Tag!]!
+  tag(id: ID!): Tag!
   posts(query: String, first: Int, skip: Int, after: String): [Post!]!
-  myPosts(query: String, first: Int, skip: Int, after: String): [Post!]!
-  comments(first: Int, skip: Int, after: String): [Comment!]!
   post(id: ID!): Post!
-  me: User!
+  comments(first: Int, skip: Int, after: String): [Comment!]!
 }
 
 type Mutation {
   createUser(data: CreateUserInput!): AuthPayload!
-  deleteUser: User!
-  updateUser(data: UpdateUserInput!): User!
-  createPost(data: CreatePostInput!): Post!
-  deletePost(id: ID!): Post!
-  updatePost(id: ID!, data: UpdatePostInput!): Post!
-  createComment(data: CreateCommentInput!): Comment!
-  deleteComment(id: ID!): Comment!
-  updateComment(id: ID!, data: UpdateCommentInput!): Comment!
   logIn(data: UserLoginInput!): AuthPayload!
+  updateUser(id: ID!, data: UpdateUserInput!): User!
+  deleteUser(id: ID!): User!
+  createTag(name: String!): Tag!
+  updateTag(id: ID!, data: UpdateTagInput!): Tag!
+  deleteTag(id: ID!): Tag!
+  createPost(data: CreatePostInput!): Post!
+  updatePost(id: ID!, data: UpdatePostInput!): Post!
+  deletePost(id: ID!): Post!
+  createComment(data: CreateCommentInput!): Comment!
+  updateComment(id: ID!, data: UpdateCommentInput!): Comment!
+  deleteComment(id: ID!): Comment!
 }
 
-type Subscription {
-  comment(postId: ID!): CommentSubscriptionPayload!
-  post: PostSubscriptionPayload!
-  myPost: PostSubscriptionPayload!
+enum UserType {
+  ADMIN
+  USER
+}
+
+type User {
+  id: ID!
+  type: UserType!
+  email: String
+  password: String!
+  name: String!
+  description: String
+  profile_picture: String
+  updatedAt: String!
+  createdAt: String!
+  posts: [Post!]!
+  comments: [Comment!]!
+}
+
+type Tag {
+  id: ID!
+  name: String!
+  posts: [Post!]!
+}
+
+type Post {
+  id: ID!
+  title: String!
+  subtitle: String
+  body: String!
+  published: Boolean!
+  updatedAt: String!
+  createdAt: String!
+  tags: [Tag!]!
+  author: User!
+  comments: [Comment!]!
+}
+
+type Comment {
+  id: ID!
+  text: String!
+  updatedAt: String!
+  createdAt: String!
+  author: User!
+  post: Post!
 }
 
 type AuthPayload {
@@ -35,23 +80,41 @@ input CreateUserInput {
   name: String!
   email: String!
   password: String!
+  description: String
+  profile_picture: String
 }
 
 input UpdateUserInput {
   name: String
   email: String
+  password: String
+  description: String
+  profile_picture: String
+}
+
+input UpdateTagInput {
+  name: String
+  posts: [ID!]
+}
+
+input ConnectTagToPost {
+  id: ID!
 }
 
 input CreatePostInput {
   title: String!
   body: String!
+  subtitle: String
   published: Boolean!
+  tags: [ConnectTagToPost!]!
 }
 
 input UpdatePostInput {
   title: String
   body: String
+  subtitle: String
   published: Boolean
+  tags: [ConnectTagToPost]
 }
 
 input CreateCommentInput {
@@ -66,33 +129,6 @@ input UpdateCommentInput {
 input UserLoginInput {
   email: String!
   password: String!
-}
-
-type User {
-  id: ID!
-  name: String!
-  email: String
-  password: String!
-  posts: [Post!]
-  comments: [Comment!]!
-  updatedAt: String!
-  createdAt: String!
-}
-
-type Post {
-  id: ID!
-  title: String!
-  body: String!
-  published: Boolean!
-  author: User!
-  comments: [Comment!]!
-}
-
-type Comment {
-  id: ID!
-  text: String!
-  author: User!
-  post: Post!
 }
 
 enum MutationType {
