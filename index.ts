@@ -1,13 +1,13 @@
 import { GraphQLServer } from 'graphql-yoga';
-import { prisma } from './prisma';
+import { prisma } from './src/prisma';
 import { ContextParameters } from 'graphql-yoga/dist/types';
-import { resolvers, fragmentReplacements } from './resolvers/index';
+import { resolvers, fragmentReplacements } from './src/resolvers';
 import * as dotenv from 'dotenv';
 
 dotenv.config({ path: `${__dirname}/.env` });
 
 const server: GraphQLServer = new GraphQLServer({
-  typeDefs: './src/schema.graphql',
+  typeDefs: `${__dirname}/src/schema.graphql`,
   resolvers,
   context(request: ContextParameters) {
     return {
