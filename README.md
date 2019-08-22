@@ -75,7 +75,7 @@ Finally run `npm start` and navigate to localhost:4000
 
 ### Additional informations
 
-This project also contains front-end version (repo yet to be added)
+This project also contains [front-end version](https://github.com/piotrek12101999/kmt-blog-client)
 
 In order to get required passwords for learning or development purposes contact mr Marek Sentfleben, mr Michal Sikorski or [Piotr Świątek](https://github.com/piotrek12101999)
 
