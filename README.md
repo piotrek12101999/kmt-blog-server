@@ -41,10 +41,10 @@ Install and setup docker (since we are using prisma that is containerized we nee
 Install prisma by running `npm i -g prisma`
 
 #### Step 7:
-Setup your database locally or host it (in this project I use [PostgreSQL](https://www.postgresql.org/) becouse in this app there are a lot of relations beetwen different fields in db and it won't take advantage of NoSQL benefits like better read performance or lack of schema. But you are free to use db of your choice that is supported currently by prisma
+Setup your database locally or host it (in this project I use [PostgreSQL](https://www.postgresql.org/) becouse in this app there are a lot of relations beetwen different fields in db and it won't take advantage of NoSQL benefits like better read performance or lack of schema. But you are free to use db of your choice that is supported currently by prisma).
 
 #### Step 8:
-Run `prisma init` and enter all your credentials. When you'll be asked to choose client pick *TypeScript Client*  This command will create 3 files:
+Run `prisma init` and enter all of your credentials. When you'll be asked to choose client pick *TypeScript Client*. This command will create 3 files:
 * prisma.yml
 * datamodel.prisma
 * docker-compose.yml
@@ -56,7 +56,7 @@ Delete datamodel.prisma file and change `datamodel:datamodel.prisma` inside of p
 Run `docker-compose up -d` command. After successful ran of command prisma service should be running on **4466** port on localhost. (If you are using windows and localhost:4466 doesn't respond try to navigate to http://127.0.0.1:4466)
 
 #### Step 11:
-Generate .env file that should consist 3 variables:
+Generate .env file that should consists of 3 variables:
 * JWT_PASSWORD
 * PASSWORD_SALT
 * PRISMA_SECRET
